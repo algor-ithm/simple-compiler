@@ -1,6 +1,7 @@
 #ifndef TABLEDRIVENFSA_H
 #define TABLEDRIVENFSA_H
 
+#include "enumDefinitions.h"
 using namespace std;
 
 const int NUM_STATES = 28;
@@ -14,10 +15,10 @@ private:
 
 public: 
     TableDrivenFSA();
-    void setStateTransition(int state, int input, int nextState);
-    int getNextState(int currentState, int inputType);
-    void setFinalState(int state);
-    bool isFinalState(int state);
+    void setStateTransition(State state, InputType input, State nextState);
+    int getNextState(State currentState, InputType inputType);
+    void setFinalState(State state);
+    bool isFinalState(State state);
 
 };
 

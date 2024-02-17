@@ -14,39 +14,52 @@ TableDrivenFSA::TableDrivenFSA()
 }
 
 // sets a transition state for each state and input recieved
-void TableDrivenFSA::setStateTransition(int state, int input, int nextState) {
+void TableDrivenFSA::setStateTransition(State state, InputType input, State nextState) {
+    // cast enums to ints
+    int stateIndex = static_cast<int>(state);
+    int inputIndex = static_cast<int>(input);
+    int nextStateEntry = static_cast<int> (nextState);
+
     // verify state and input are in range
-    if(state < 0 || state >= NUM_STATES || input < 0 || input >= NUM_INPUTS) {
+    if(stateIndex < 0 || stateIndex >= NUM_STATES || inputIndex < 0 || inputIndex >= NUM_INPUTS) {
         throw out_of_range("Current state or input is out of range.");
     }
     // add transition to stateTable
-    stateTable[state][input] = nextState;
+    stateTable[stateIndex][inputIndex] = nextStateEntry;
 }
 
 // gets the nextState to transition to from the stateTable
-int TableDrivenFSA::getNextState(int currentState, int inputType){
+int TableDrivenFSA::getNextState(State currentState, InputType inputType){
+   // cast enums to ints
+    int stateIndex = static_cast<int>(currentState);
+    int inputIndex = static_cast<int>(inputType);
+
     // verify state and input are in range
-    if (currentState < 0 || currentState >= NUM_STATES || inputType < 0 || inputType >= NUM_INPUTS) {
+    if(stateIndex < 0 || stateIndex >= NUM_STATES || inputIndex < 0 || inputIndex >= NUM_INPUTS) {
         throw out_of_range("Current state or input is out of range.");
     }
-    // return nextState from stateTable
-    return stateTable[currentState][inputType];
+    return stateTable[stateIndex][inputIndex];
 }
 
 // set final states of stateTable
-void TableDrivenFSA::setFinalState(int state) {
+void TableDrivenFSA::setFinalState(State state) {
+    // cast state to int
+    int stateIndex = static_cast<int>(state);
     // verify state is in range
-    if (state < 0 || state >= NUM_STATES) {
+    if (stateIndex < 0 || stateIndex >= NUM_STATES) {
         throw out_of_range("State out of range.");
     }
-    finalStates[state] = true;
+    finalStates[stateIndex] = true;
 }
 
-bool TableDrivenFSA::isFinalState(int state) {
-    if (state < 0 || state >= NUM_STATES) {
+bool TableDrivenFSA::isFinalState(State state) {
+    //cast state to int
+    int stateIndex = static_cast<int>(state);
+    // verify state is in range
+    if (stateIndex < 0 || stateIndex >= NUM_STATES) {
         throw out_of_range("State out of range.");
     }
-    return finalStates[state];
+    return finalStates[stateIndex];
 }
 
 
