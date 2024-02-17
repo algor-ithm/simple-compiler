@@ -1,3 +1,3 @@
 # Simple Compiler 
 
-This  compiler will take a high level language and translate it into x86 assembly language.
+This  compiler will translate Java 0 into x86 assembly language. Compiler written in C++.
