@@ -5,7 +5,3 @@ Lexer::Lexer()
 
 }
 
-Lexer::~Lexer()
-{
-
-}
