@@ -1,15 +1,16 @@
 #include "TableDrivenFSA.h"
 #include <stdexcept>
 
+
 TableDrivenFSA::TableDrivenFSA()
 {
     //initialize stateTable with default value of -1
-    for (int row = 0; row < NUM_STATES; row++) {
+    for (int state = 0; state < NUM_STATES; state++) {
         for (int col = 0; col < NUM_INPUTS; col++) {
-            stateTable[row][col] = -1;
+            stateTable[state][col] = -1;
         }
         // initial finalStates to false (non-final) 
-        finalStates[row] = false;
+        finalStates[state] = false;
     }
 }
 
@@ -63,7 +64,7 @@ bool TableDrivenFSA::isFinalState(State state) {
 }
 
 // construct FSA for Java 0 function
-TableDrivenFSA configJava0FSA() {
+TableDrivenFSA TableDrivenFSA::configJava0FSA() {
     TableDrivenFSA fsa; 
 
     //Start State
@@ -76,22 +77,94 @@ TableDrivenFSA configJava0FSA() {
     fsa.setStateTransition(State::Start, InputType::Newline, State::Start);
     fsa.setStateTransition(State::Start, InputType::Whitespace, State::Start);
     fsa.setStateTransition(State::Start, InputType::Equals, State::Equals);
-    fsa.setStateTransition(State::Start, InputType::Less, State::LessThan);
-    // TODO: finish other start state transitions
+    fsa.setStateTransition(State::Start, InputType::Less, State::Less);
+    fsa.setStateTransition(State::Start, InputType::Greater, State::Greater);
+    fsa.setStateTransition(State::Start, InputType::Exclamation, State::Exclamation);
+    fsa.setStateTransition(State::Start, InputType::Comma, State::Delimiter);
+    fsa.setStateTransition(State::Start, InputType::Semi, State::Delimiter);
+    fsa.setStateTransition(State::Start, InputType::LeftBrace, State::LeftBrace);
+    fsa.setStateTransition(State::Start, InputType::RightBrace, State::RightBrace);
+    fsa.setStateTransition(State::Start, InputType::LeftParen, State::Parentheses);
+    fsa.setStateTransition(State::Start, InputType::RightParen, State::Parentheses);
+    fsa.setStateTransition(State::Start, InputType::EndFile, State::EndFile);
+    fsa.setStateTransition(State::Start, InputType::Other, State::Error);
 
     
-    //Error State: No transitions needed final state; logic in lexer
+    //Error state: No transitions needed final state; logic in lexer
     fsa.setFinalState(State::Error);
 
-    //Transition from Operation State
+    //Final operation state
+    fsa.setFinalState(State::Operation);
 
-    //Transition from Digit State
+    //Transition from digit state
 
-    //Transition from Final Digit state
+    //Final digit state
+    fsa.setFinalState(State::DigitFinal);
 
-    //Transition from Identifier
+    //Transition from identifier
 
-    //Transition from Final Indentifer
+    //Final indentifier state
+    fsa.setFinalState(State::IdentifierFinal);
 
-    //Transition from 
+    //Transition from slash state
+
+    //Final division state
+    fsa.setFinalState(State::Division);
+
+    // Transitions multiLine comment state
+
+    // Transitions from end multiline comment state
+
+    // Transitions fron single line comment state
+
+    // Transitions from equal state
+
+    // Final assignment state
+    fsa.setFinalState(State::Assignment);
+
+    // Final equality state
+    fsa.setFinalState(State::Equality);
+
+    // Transitions from less state
+
+    // Final less than State
+    fsa.setFinalState(State::LessThan);
+
+    // Final lessEqual state
+    fsa.setFinalState(State::LessEqual);
+
+    // Transitions from greater state
+
+    // Final greater than state
+    fsa.setFinalState(State::GreaterThan);
+
+    // Final greater than or equal state
+    fsa.setFinalState(State::GreaterEqual);
+
+    // Transitions from exclamation state
+
+    // Final not state
+    fsa.setFinalState(State::Not);
+
+    // Final not equal to state
+    fsa.setFinalState(State::NotEqual);
+
+    // final delimiter state
+    fsa.setFinalState(State::Delimiter);
+
+    // final left brace state
+    fsa.setFinalState(State::LeftBrace);
+
+    // Transitions from right brace state
+
+    // Final end file state
+    fsa.setFinalState(State::EndFile);
+
+    // Final right brace state
+    fsa.setFinalState(State::RightBrace);
+
+    // Final parentheses state
+    fsa.setFinalState(State::Parentheses);
+
+    return fsa;
 }
