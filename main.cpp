@@ -3,10 +3,7 @@
 
 using namespace std;
 
-// construct FSA for Java 0 function
-
 // read file function
-
 
 // add args to pass program to compiler
 int main() {

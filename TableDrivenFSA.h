@@ -1,3 +1,4 @@
+// This table driven FSA is specifically intended for the Java 0 language
 #ifndef TABLEDRIVENFSA_H
 #define TABLEDRIVENFSA_H
 
@@ -19,6 +20,7 @@ public:
     int getNextState(State currentState, InputType inputType);
     void setFinalState(State state);
     bool isFinalState(State state);
+    TableDrivenFSA configJava0FSA();
 
 };
 

@@ -62,4 +62,36 @@ bool TableDrivenFSA::isFinalState(State state) {
     return finalStates[stateIndex];
 }
 
+// construct FSA for Java 0 function
+TableDrivenFSA configJava0FSA() {
+    TableDrivenFSA fsa; 
 
+    //Start State
+    fsa.setStateTransition(State::Start, InputType::Letter, State::Identifier);
+    fsa.setStateTransition(State::Start, InputType::Digit, State::Digit);
+    fsa.setStateTransition(State::Start, InputType::Asterisk, State::Operation);
+    fsa.setStateTransition(State::Start, InputType::Plus, State::Operation);
+    fsa.setStateTransition(State::Start, InputType::Minus, State::Operation);
+    fsa.setStateTransition(State::Start, InputType::Slash, State::Slash);
+    fsa.setStateTransition(State::Start, InputType::Newline, State::Start);
+    fsa.setStateTransition(State::Start, InputType::Whitespace, State::Start);
+    fsa.setStateTransition(State::Start, InputType::Equals, State::Equals);
+    fsa.setStateTransition(State::Start, InputType::Less, State::LessThan);
+    // TODO: finish other start state transitions
+
+    
+    //Error State: No transitions needed final state; logic in lexer
+    fsa.setFinalState(State::Error);
+
+    //Transition from Operation State
+
+    //Transition from Digit State
+
+    //Transition from Final Digit state
+
+    //Transition from Identifier
+
+    //Transition from Final Indentifer
+
+    //Transition from 
+}
