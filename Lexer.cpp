@@ -1,7 +1,6 @@
 #include "Lexer.h"
 
-Lexer::Lexer()
-{
+Lexer::Lexer(const TableDrivenFSA& fsa) : fsa(fsa), position(0) {}
+  
 
-}
 
