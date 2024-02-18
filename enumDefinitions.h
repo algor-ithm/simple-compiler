@@ -29,7 +29,8 @@ enum class State {
     LeftBraceFinal,       // Final left brace state (24)
     RightBrace,           // Right brace state (25)
     EOF,                  // End of file state (26)
-    RightBraceFinal       // final right brace state (27) 
+    RightBraceFinal,      // final right brace state (27) 
+    COUNT                 // keeps a count of the number of states
 };
 
 enum InputType {
@@ -50,6 +51,7 @@ enum InputType {
     LeftBrace,            // { (14)
     RightBrace,           // } (15)
     EOF,                  // EOF (16)
-    Other                 // Anything else (17)
+    Other,                // Anything else (17)
+    COUNT                 // Keeps a count of the number of input types
 };
 #endif 
