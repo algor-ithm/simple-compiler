@@ -4,8 +4,8 @@
 #include "enumDefinitions.h"
 using namespace std;
 
-const int NUM_STATES = 28;
-const int NUM_INPUTS = 17;
+const int NUM_STATES = static_cast<int>(State::COUNT);
+const int NUM_INPUTS = static_cast<int>(InputType::COUNT);
 
 class TableDrivenFSA
 {
