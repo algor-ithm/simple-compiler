@@ -14,14 +14,16 @@ private:
     int stateTable[NUM_STATES][NUM_INPUTS];
     bool finalStates[NUM_STATES];
 
+    void configureFinalStates();
+    void configureTransitions();
+
 public: 
     TableDrivenFSA();
     void setStateTransition(State state, InputType input, State nextState);
     int getNextState(State currentState, InputType inputType);
     void setFinalState(State state);
     bool isFinalState(State state);
-    TableDrivenFSA configJava0FSA();
-
+    void configJava0FSA();
 };
 
 #endif 
