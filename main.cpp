@@ -5,7 +5,7 @@ using namespace std;
 
 // read file function
 
-// add args to pass program to compiler
+// add args to pass program to compiler and output file names?
 int main() {
     // main shit goes here
 
