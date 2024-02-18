@@ -14,8 +14,6 @@ public:
     // read token list file
     // write symbol table file
 
-private:
-
 };
 
 #endif

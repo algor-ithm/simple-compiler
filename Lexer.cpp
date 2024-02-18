@@ -1,26 +1,77 @@
 #include "Lexer.h"
+#include <cctype>
 
 Lexer::Lexer(const TableDrivenFSA& fsa) : fsa(fsa) {}
 
-/* SetInput Function
-Bring entire file into functions
-set poisition to 0
-clear previous tokens
-*/
+// Set the input string for the lexer
+void Lexer::setInput(const string& newInput) {
+    input = newInput;
+    position = 0;
+    tokens.clear(); // Clear previous tokens
+}
 
-/* charToInputType
-    Convert each character to its input type
-    have isaplha and isdigit functions
-    convert other types
-    return other as default
-    maybe switch statement
-*/
+// Converts a character to its corresponding input
+InputType Lexer::charToInputType(char ch) {
+    switch (ch) {
+        case '*':
+            return InputType::Asterisk;
+        case '+':
+            return InputType::Plus;
+        case '-':
+            return InputType::Minus;
+        case '/':
+            return InputType::Slash;
+        case '\n':
+            return InputType::Newline;
+        case ' ':
+        case '\t':
+            return InputType::Whitespace;
+        case '=':
+            return InputType::Equals;
+        case '<':
+            return InputType::Less;
+        case '>':
+            return InputType::Greater;
+        case '!':
+            return InputType::Exclamation;
+        case ',':
+            return InputType::Comma;
+        case ';':
+            return InputType::Semi;
+        case '{':
+            return InputType::LeftBrace;
+        case '}':
+            return InputType::RightBrace;
+        case '(':
+        case ')':
+        default:
+            if (isalpha(ch)) return InputType::Letter;
+            else if(isdigit(ch)) return InputType::Digit;
+            else return InputType::Other;
+    }
+}
 
-/* addToken
-string lexeme + string token  
-input into vector
-*/
+// Add a new token to the token vector
+void Lexer::addTokens(const string& lexeme, const string& type) {
+    tokens.push_back(Token(lexeme, type));
+}
 
+// Maps each final state to its corresponding token type
+string Lexer::mapStateToTokenType(State state, const string& lexeme) const {
+    switch(state){
+        case State::OPERATION:
+            if (lexeme == "+") return "ADDOP";
+            if (lexeme == "-") return "SUBOP";
+        case State::IDENTIFER_FINAL:
+            // deal with keywords?
+            return "INDENTIFIER";
+        case State::DIGIT_FINAL:
+            return "NUMERIC_LITERAL";
+        default:
+            return "OTHER";
+    }
+
+}
 /* mapStateToTokenType
     map each final state to its token type for token list
     use switch state and pass the state return token type

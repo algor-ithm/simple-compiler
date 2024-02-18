@@ -65,11 +65,11 @@ bool TableDrivenFSA::isFinalState(State state) {
 
 void TableDrivenFSA::configureFinalStates() {
     // Final token states: no transition needed
-    setFinalState(State::Error);
-    setFinalState(State::Operation);
-    setFinalState(State::DigitFinal);
-    setFinalState(State::IdentifierFinal);
-    setFinalState(State::Division);
+    setFinalState(State::ERROR);
+    setFinalState(State::OPERATION);
+    setFinalState(State::DIGIT_FINAL);
+    setFinalState(State::IDENTIFER_FINAL);
+    setFinalState(State::DIVISION);
     setFinalState(State::Assignment);
     setFinalState(State::Equality);
     setFinalState(State::LessThan);
@@ -86,65 +86,65 @@ void TableDrivenFSA::configureFinalStates() {
 }
 
 void TableDrivenFSA::configureTransitions() {
-    // Start State
-    setStateTransition(State::Start, InputType::Letter, State::Identifier);
-    setStateTransition(State::Start, InputType::Digit, State::Digit);
-    setStateTransition(State::Start, InputType::Asterisk, State::Operation);
-    setStateTransition(State::Start, InputType::Plus, State::Operation);
-    setStateTransition(State::Start, InputType::Minus, State::Operation);
-    setStateTransition(State::Start, InputType::Slash, State::Slash);
-    setStateTransition(State::Start, InputType::Newline, State::Start);
-    setStateTransition(State::Start, InputType::Whitespace, State::Start);
-    setStateTransition(State::Start, InputType::Equals, State::Equals);
-    setStateTransition(State::Start, InputType::Less, State::Less);
-    setStateTransition(State::Start, InputType::Greater, State::Greater);
-    setStateTransition(State::Start, InputType::Exclamation, State::Exclamation);
-    setStateTransition(State::Start, InputType::Comma, State::Delimiter);
-    setStateTransition(State::Start, InputType::Semi, State::Delimiter);
-    setStateTransition(State::Start, InputType::LeftBrace, State::LeftBrace);
-    setStateTransition(State::Start, InputType::RightBrace, State::RightBrace);
-    setStateTransition(State::Start, InputType::LeftParen, State::Parentheses);
-    setStateTransition(State::Start, InputType::RightParen, State::Parentheses);
-    setStateTransition(State::Start, InputType::EndFile, State::EndFile);
-    setStateTransition(State::Start, InputType::Other, State::Error);
+    // START State
+    setStateTransition(State::START, InputType::Letter, State::IDENTIFIER);
+    setStateTransition(State::START, InputType::Digit, State::DIGIT);
+    setStateTransition(State::START, InputType::Asterisk, State::OPERATION);
+    setStateTransition(State::START, InputType::Plus, State::OPERATION);
+    setStateTransition(State::START, InputType::Minus, State::OPERATION);
+    setStateTransition(State::START, InputType::Slash, State::SLASH);
+    setStateTransition(State::START, InputType::Newline, State::START);
+    setStateTransition(State::START, InputType::Whitespace, State::START);
+    setStateTransition(State::START, InputType::Equals, State::Equals);
+    setStateTransition(State::START, InputType::Less, State::Less);
+    setStateTransition(State::START, InputType::Greater, State::Greater);
+    setStateTransition(State::START, InputType::Exclamation, State::Exclamation);
+    setStateTransition(State::START, InputType::Comma, State::Delimiter);
+    setStateTransition(State::START, InputType::Semi, State::Delimiter);
+    setStateTransition(State::START, InputType::LeftBrace, State::LeftBrace);
+    setStateTransition(State::START, InputType::RightBrace, State::RightBrace);
+    setStateTransition(State::START, InputType::LeftParen, State::Parentheses);
+    setStateTransition(State::START, InputType::RightParen, State::Parentheses);
+    setStateTransition(State::START, InputType::EndFile, State::EndFile);
+    setStateTransition(State::START, InputType::Other, State::ERROR);
     
     // Digit State
     for (int input = 0; input < static_cast<int>(InputType::COUNT); input++) {
-        setStateTransition(State::Digit, static_cast<InputType>(input), State::DigitFinal);
+        setStateTransition(State::DIGIT, static_cast<InputType>(input), State::DIGIT_FINAL);
     }
-    setStateTransition(State::Digit, InputType::Digit, State::Digit);
+    setStateTransition(State::DIGIT, InputType::Digit, State::DIGIT);
 
     // Identifier State
     for (int input = 0; input < static_cast<int>(InputType::COUNT); input++) {
-        setStateTransition(State::Identifier, static_cast<InputType>(input), State::IdentifierFinal);
+        setStateTransition(State::IDENTIFIER, static_cast<InputType>(input), State::IDENTIFER_FINAL);
     }
-    setStateTransition(State::Identifier, InputType::Letter, State::Identifier);
-    setStateTransition(State::Identifier, InputType::Digit, State::Identifier);
+    setStateTransition(State::IDENTIFIER, InputType::Letter, State::IDENTIFIER);
+    setStateTransition(State::IDENTIFIER, InputType::Digit, State::IDENTIFIER);
 
     // Slash State
     for (int input = 0; input < static_cast<int>(InputType::COUNT); input++) {
-        setStateTransition(State::Slash, static_cast<InputType>(input), State::Division);
+        setStateTransition(State::SLASH, static_cast<InputType>(input), State::DIVISION);
     }
-    setStateTransition(State::Slash, InputType::Asterisk, State::MultiLine);
-    setStateTransition(State::Slash, InputType::Slash, State::SingleLine);
+    setStateTransition(State::SLASH, InputType::Asterisk, State::MULTI_LINE);
+    setStateTransition(State::SLASH, InputType::Slash, State::SingleLine);
 
     // Multi-line Comment State
     for (int input = 0; input < static_cast<int>(InputType::COUNT); input++) {
-        setStateTransition(State::MultiLine, static_cast<InputType>(input), State::MultiLine);
+        setStateTransition(State::MULTI_LINE, static_cast<InputType>(input), State::MULTI_LINE);
     }
-    setStateTransition(State::MultiLine, InputType::Asterisk, State::EndMulti);
+    setStateTransition(State::MULTI_LINE, InputType::Asterisk, State::END_MULTI);
 
     // End Multi-line Comment State
     for (int input = 0; input < static_cast<int>(InputType::COUNT); input++) {
-        setStateTransition(State::EndMulti, static_cast<InputType>(input), State::MultiLine);
+        setStateTransition(State::END_MULTI, static_cast<InputType>(input), State::MULTI_LINE);
     }
-    setStateTransition(State::EndMulti, InputType::Slash, State::Start);
+    setStateTransition(State::END_MULTI, InputType::Slash, State::START);
 
     // Single Line Comment State
     for (int input = 0; input < static_cast<int>(InputType::COUNT); input++) {
         setStateTransition(State::SingleLine, static_cast<InputType>(input), State::SingleLine);
     }
-    setStateTransition(State::EndMulti, InputType::Slash, State::Start);
+    setStateTransition(State::END_MULTI, InputType::Slash, State::START);
 
     // Equal State
     for (int input = 0; input < static_cast<int>(InputType::COUNT); input++) {

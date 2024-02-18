@@ -28,7 +28,7 @@ private:
     // functions
     InputType charToInputType(char ch);
     void addTokens(const string& lexeme, const string& type);
-    string mapStateToTokenType(State state) const;
+    string mapStateToTokenType(State state, const string& lexeme) const;
 
 public:
     explicit Lexer(const TableDrivenFSA& fsa);
