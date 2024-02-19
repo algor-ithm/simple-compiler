@@ -14,40 +14,40 @@ void Lexer::setInput(const string& newInput) {
 InputType Lexer::charToInputType(char ch) {
     switch (ch) {
         case '*':
-            return InputType::Asterisk;
+            return InputType::ASTERISK;
         case '+':
-            return InputType::Plus;
+            return InputType::PLUS;
         case '-':
-            return InputType::Minus;
+            return InputType::MINUS;
         case '/':
-            return InputType::Slash;
+            return InputType::SLASH;
         case '\n':
-            return InputType::Newline;
+            return InputType::NEWLINE;
         case ' ':
         case '\t':
-            return InputType::Whitespace;
+            return InputType::WHITESPACE;
         case '=':
-            return InputType::Equals;
+            return InputType::EQUALS;
         case '<':
-            return InputType::Less;
+            return InputType::LESS;
         case '>':
-            return InputType::Greater;
+            return InputType::GREATER;
         case '!':
-            return InputType::Exclamation;
+            return InputType::EXCLAMATION;
         case ',':
-            return InputType::Comma;
+            return InputType::COMMA;
         case ';':
-            return InputType::Semi;
+            return InputType::SEMI;
         case '{':
-            return InputType::LeftBrace;
+            return InputType::LEFT_BRACE;
         case '}':
-            return InputType::RightBrace;
+            return InputType::RIGHT_BRACE;
         case '(':
         case ')':
         default:
-            if (isalpha(ch)) return InputType::Letter;
-            else if(isdigit(ch)) return InputType::Digit;
-            else return InputType::Other;
+            if (isalpha(ch)) return InputType::LETTER;
+            else if(isdigit(ch)) return InputType::DIGIT;
+            else return InputType::OTHER;
     }
 }
 
@@ -62,16 +62,22 @@ string Lexer::mapStateToTokenType(State state, const string& lexeme) const {
         case State::OPERATION:
             if (lexeme == "+") return "ADDOP";
             if (lexeme == "-") return "SUBOP";
+            if (lexeme == "*") return "MULOP";
         case State::IDENTIFER_FINAL:
             // deal with keywords?
             return "INDENTIFIER";
         case State::DIGIT_FINAL:
             return "NUMERIC_LITERAL";
+        case State::DIVISION:
+            return "DIVOP";
+        case State::ASSIGNMENT:
+            return "ASSIGN";
+        
         default:
             return "OTHER";
     }
-
 }
+
 /* mapStateToTokenType
     map each final state to its token type for token list
     use switch state and pass the state return token type
