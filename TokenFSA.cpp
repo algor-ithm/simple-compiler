@@ -1,7 +1,7 @@
-#include "TableDrivenFSA.h";
+#include "TokenFSA.h";
 #include <stdexcept>
 
-TableDrivenFSA::TableDrivenFSA() {
+TokenFSA::TokenFSA() {
     // initialize stateTable with default value of -1
     for (int state = 0; state < NUM_STATES; state++) {
         for (int col = 0; col < NUM_INPUTS; col++) {
@@ -15,7 +15,7 @@ TableDrivenFSA::TableDrivenFSA() {
 }
 
 // sets a transition state for each state and input recieved
-void TableDrivenFSA::setStateTransition(State state, InputType input, State nextState) {
+void TokenFSA::setStateTransition(State state, InputType input, State nextState) {
     // cast enums to ints
     int stateIndex = static_cast<int>(state);
     int inputIndex = static_cast<int>(input);
@@ -30,7 +30,7 @@ void TableDrivenFSA::setStateTransition(State state, InputType input, State next
 }
 
 // gets the nextState to transition to from the stateTable
-int TableDrivenFSA::getNextState(State currentState, InputType inputType) {
+int TokenFSA::getNextState(State currentState, InputType inputType) {
     // cast enums to ints
     int stateIndex = static_cast<int>(currentState);
     int inputIndex = static_cast<int>(inputType);
@@ -43,7 +43,7 @@ int TableDrivenFSA::getNextState(State currentState, InputType inputType) {
 }
 
 // set final states of stateTable
-void TableDrivenFSA::setFinalState(State state) {
+void TokenFSA::setFinalState(State state) {
     // cast state to int
     int stateIndex = static_cast<int>(state);
     // verify state is in range
@@ -53,7 +53,7 @@ void TableDrivenFSA::setFinalState(State state) {
     finalStates[stateIndex] = true;
 }
 
-bool TableDrivenFSA::isFinalState(State state) {
+bool TokenFSA::isFinalState(State state) {
     // cast state to int
     int stateIndex = static_cast<int>(state);
     // verify state is in range
@@ -63,12 +63,12 @@ bool TableDrivenFSA::isFinalState(State state) {
     return finalStates[stateIndex];
 }
 
-void TableDrivenFSA::configureFinalStates() {
+void TokenFSA::configureFinalStates() {
     // Final token states: no transition needed
     setFinalState(State::ERROR);
     setFinalState(State::OPERATION);
     setFinalState(State::DIGIT_FINAL);
-    setFinalState(State::IDENTIFER_FINAL);
+    setFinalState(State::IDENTIFIER_FINAL);
     setFinalState(State::DIVISION);
     setFinalState(State::ASSIGNMENT);
     setFinalState(State::EQUALITY);
@@ -79,13 +79,12 @@ void TableDrivenFSA::configureFinalStates() {
     setFinalState(State::NOT);
     setFinalState(State::NOT_EQUAL);
     setFinalState(State::DELIMITER);
-    setFinalState(State::LEFT_BRACE);
-    setFinalState(State::END_FILE);
-    setFinalState(State::RIGHT_BRACE);
+    setFinalState(State::BRACE);
     setFinalState(State::PARENTHESIS);
 }
 
-void TableDrivenFSA::configureTransitions() {
+//TODO: Add transition to Error state for other on all states
+void TokenFSA::configureTransitions() {
     // START State
     setStateTransition(State::START, InputType::LETTER, State::IDENTIFIER);
     setStateTransition(State::START, InputType::DIGIT, State::DIGIT);
@@ -101,11 +100,10 @@ void TableDrivenFSA::configureTransitions() {
     setStateTransition(State::START, InputType::EXCLAMATION, State::EXCLAMATION);
     setStateTransition(State::START, InputType::COMMA, State::DELIMITER);
     setStateTransition(State::START, InputType::SEMI, State::DELIMITER);
-    setStateTransition(State::START, InputType::LEFT_BRACE, State::LEFT_BRACE);
-    setStateTransition(State::START, InputType::RIGHT_BRACE, State::RIGHT_BRACE);
+    setStateTransition(State::START, InputType::LEFT_BRACE, State::BRACE);
+    setStateTransition(State::START, InputType::RIGHT_BRACE, State::BRACE);
     setStateTransition(State::START, InputType::LEFT_PAREN, State::PARENTHESIS);
     setStateTransition(State::START, InputType::RIGHT_PAREN, State::PARENTHESIS);
-    setStateTransition(State::START, InputType::END_FILE, State::END_FILE);
     setStateTransition(State::START, InputType::OTHER, State::ERROR);
     
     // Digit State
@@ -116,7 +114,7 @@ void TableDrivenFSA::configureTransitions() {
 
     // Identifier State
     for (int input = 0; input < static_cast<int>(InputType::COUNT); input++) {
-        setStateTransition(State::IDENTIFIER, static_cast<InputType>(input), State::IDENTIFER_FINAL);
+        setStateTransition(State::IDENTIFIER, static_cast<InputType>(input), State::IDENTIFIER_FINAL);
     }
     setStateTransition(State::IDENTIFIER, InputType::LETTER, State::IDENTIFIER);
     setStateTransition(State::IDENTIFIER, InputType::DIGIT, State::IDENTIFIER);
@@ -178,7 +176,7 @@ void TableDrivenFSA::configureTransitions() {
 }
 
 // construct FSA for Java 0 function
-void TableDrivenFSA::configJava0FSA() {
+void TokenFSA::configJava0FSA() {
     configureFinalStates();
     configureTransitions();
 }

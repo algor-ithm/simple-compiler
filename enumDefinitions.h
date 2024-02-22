@@ -8,7 +8,7 @@ enum class State {
     DIGIT,                // Accumalate digit state (3)
     DIGIT_FINAL,          // Final digit state (4)
     IDENTIFIER,           // Identifier state (5)
-    IDENTIFER_FINAL,      // Final identifier state (6)
+    IDENTIFIER_FINAL,     // Final identifier state (6)
     SLASH,                // Slash state (7)
     DIVISION,             // Division (single slash) state  (8)
     MULTI_LINE,           // Multi-line comment start state (9)
@@ -27,11 +27,8 @@ enum class State {
     NOT,                  // Not state (22)
     NOT_EQUAL,            // Final not equals state (23)
     DELIMITER,            // Final delimiter state (24)
-    LEFT_BRACE,           // Final left brace state (25)
-    RIGHT_BRACE,          // Right brace state (26)
-    END_FILE,             // End of file state (27)
-    RIGHT_BRACE_FINAL,    // final right brace state (28)
-    PARENTHESIS,          // Final Parenthesis state (29)
+    BRACE,                // Final brace state (25)
+    PARENTHESIS,          // Final Parenthesis state (26)
     COUNT                 // keeps a count of the number of states
 };
 
@@ -54,7 +51,7 @@ enum InputType {
     RIGHT_BRACE,          // } (15)
     LEFT_PAREN,           // ( (16)
     RIGHT_PAREN,          // ) (17)
-    END_FILE,              // EOF (18)
+    END_FILE,             // EOF (18)
     OTHER,                // Anything else (19)
     COUNT                 // Keeps a count of the number of input types
 };

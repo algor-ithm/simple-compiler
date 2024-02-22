@@ -2,7 +2,7 @@
 #define LEXER_H
 
 #include "enumDefinitions.h"
-#include "TableDrivenFSA.h"
+#include "TokenFSA.h"
 #include <string>
 #include <vector>
 
@@ -21,7 +21,7 @@ class Lexer
 {
 private:
     // variables
-    TableDrivenFSA fsa;
+    TokenFSA fsa;
     string input;
     size_t position = 0;
     vector<Token> tokens;
@@ -31,7 +31,7 @@ private:
     string mapStateToTokenType(State state, const string& lexeme) const;
 
 public:
-    explicit Lexer(const TableDrivenFSA& fsa);
+    explicit Lexer(const TokenFSA& fsa);
     void setInput(const string& newInput);
     void tokenize();
     const vector<Token>& getTokens() const;

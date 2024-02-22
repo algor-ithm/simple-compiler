@@ -1,7 +1,7 @@
 #include "Lexer.h"
 #include <cctype>
 
-Lexer::Lexer(const TableDrivenFSA& fsa) : fsa(fsa) {}
+Lexer::Lexer(const TokenFSA& fsa) : fsa(fsa) {}
 
 // Set the input string for the lexer
 void Lexer::setInput(const string& newInput) {
@@ -43,7 +43,9 @@ InputType Lexer::charToInputType(char ch) {
         case '}':
             return InputType::RIGHT_BRACE;
         case '(':
+            return InputType::LEFT_PAREN;
         case ')':
+            return InputType::RIGHT_PAREN;
         default:
             if (isalpha(ch)) return InputType::LETTER;
             else if(isdigit(ch)) return InputType::DIGIT;
@@ -63,26 +65,54 @@ string Lexer::mapStateToTokenType(State state, const string& lexeme) const {
             if (lexeme == "+") return "ADDOP";
             if (lexeme == "-") return "SUBOP";
             if (lexeme == "*") return "MULOP";
-        case State::IDENTIFER_FINAL:
+            break;
+        case State::IDENTIFIER_FINAL:
             // deal with keywords?
-            return "INDENTIFIER";
+            return "IDENTIFIER";
         case State::DIGIT_FINAL:
             return "NUMERIC_LITERAL";
         case State::DIVISION:
             return "DIVOP";
         case State::ASSIGNMENT:
             return "ASSIGN";
-        
+        case State::EQUALITY:
+        case State::LESS_THAN:
+        case State::LESS_EQUAL:
+        case State::GREATER_THAN:
+        case State::GREATER_EQUAL:
+        case State::NOT:
+        case State::NOT_EQUAL:
+            return "RELOP";
+        case State::DELIMITER:
+            if (lexeme == ",") return "COMMA";
+            if (lexeme == ";") return "SEMI";
+            break;
+        case State::BRACE:
+            if (lexeme == "{") return "LEFT_BRACE";
+            if (lexeme == "}") return "RIGHT_BRACE";
+            return "RIGHT_BRACE";
+        case State::PARENTHESIS:
+            if (lexeme == "(") return "LEFT_PAREN";
+            if (lexeme == ")") return "RIGHT_PAREN";
+            break;
         default:
             return "OTHER";
     }
 }
 
-/* mapStateToTokenType
-    map each final state to its token type for token list
-    use switch state and pass the state return token type
-*/
+void Lexer::tokenize() {
+    string currentLexeme;
+    State currentState = State::START;
 
+    
+
+    while (position < input.length()) {
+        char currentChar = input[position];
+        InputType inputType = charToInputType(currentChar);
+
+
+    }
+}
 /* tokenize
 current lexeme, current state
 while input to read
