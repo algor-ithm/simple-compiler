@@ -56,7 +56,7 @@ InputType Lexer::charToInputType(char ch) {
         case '(':
             return InputType::LEFT_PAREN;
         case ')':
-            return InputType::RIGHT_PAREN;
+            return RIGHT_PAREN;
         default:
             if (isalpha(ch)) return InputType::LETTER;
             else if(isdigit(ch)) return InputType::DIGIT;
@@ -69,12 +69,53 @@ void Lexer::addTokens(const string& lexeme, const string& type) {
     tokens.push_back(Token(lexeme, type));
 }
 
-// maybe a mapchartoinputtype
+// Maps each final state to its corresponding token type
+string Lexer::mapStateToTokenType(State state, const string& lexeme) const {
+    switch(state){
+        case State::OPERATION:
+            if (lexeme == "+") return "ADDOP";
+            if (lexeme == "-") return "SUBOP";
+            if (lexeme == "*") return "MULOP";
+            break;
+        case State::IDENTIFIER_FINAL:
+            // deal with keywords?
+            return "IDENTIFIER";
+        case State::DIGIT_FINAL:
+            return "NUMERIC_LITERAL";
+        case State::DIVISION:
+            return "DIVOP";
+        case State::ASSIGNMENT:
+            return "ASSIGN";
+        case State::EQUALITY:
+        case State::LESS_THAN:
+        case State::LESS_EQUAL:
+        case State::GREATER_THAN:
+        case State::GREATER_EQUAL:
+        case State::NOT:
+        case State::NOT_EQUAL:
+            return "RELOP";
+        case State::DELIMITER:
+            if (lexeme == ",") return "COMMA";
+            if (lexeme == ";") return "SEMI";
+            break;
+        case State::BRACE:
+            if (lexeme == "{") return "LEFT_BRACE";
+            if (lexeme == "}") return "RIGHT_BRACE";
+            return "RIGHT_BRACE";
+        case State::PAREN:
+            if (lexeme == "(") return "LEFT_PAREN";
+            if (lexeme == ")") return "RIGHT_PAREN";
+            break;
+        default:
+            return "OTHER";
+    }
+    return "UNKNOWN";
+}
+
 
 void Lexer::tokenize() {
     string currentLexeme;
     State currentState = State::START;
-    string tokenType;
 
     while (position < input.length()) {
         // Get the next char and determine its input type
@@ -84,19 +125,21 @@ void Lexer::tokenize() {
         State nextState = fsa.getNextState(currentState, charType);
         // Determine course of action based on nextState
         switch(nextState) {
+            case START:
+                currentLexeme.clear();
+                currentState = nextState;
+                position++;
+                break;
             case ERROR:
                 cout << "Invalid character read in." << endl;
                 break;
                 position++;
             case OPERATION:
+            case DELIMITER:
+            case BRACE:
+            case PAREN:
                 currentLexeme = currentChar;
-                if (currentLexeme == "+") 
-                    tokenType = "addop";
-                else if (currentLexeme == "-") 
-                    tokenType = "subop";
-                else 
-                    tokenType = "mop";
-                addTokens(currentLexeme, tokenType);
+                addTokens(currentLexeme, mapStateToTokenType(nextState, currentLexeme));
                 currentLexeme.clear();
                 currentState = START;
                 position++;
@@ -116,23 +159,13 @@ void Lexer::tokenize() {
                 position++;
                 break;
             case DIGIT_FINAL: 
-                addTokens(currentLexeme, "numeric_literal");
-                currentLexeme.clear();
-                currentState = START;
-                break;
             case IDENTIFIER_FINAL:
-                // check for keywords here
-                addTokens(currentLexeme, "identifier");
-                currentLexeme.clear();
-                currentState = START;
-                break;
             case DIVISION:
-                addTokens(currentLexeme, "divop");
-                currentLexeme.clear();
-                currentState = START;
-                break;
             case ASSIGNMENT:
-                addTokens(currentLexeme, "assign");
+            case LESS_THAN:
+            case GREATER_THAN:
+            case NOT:
+                addTokens(currentLexeme, mapStateToTokenType(nextState, currentLexeme));
                 currentLexeme.clear();
                 currentState = START;
                 break;
@@ -140,55 +173,20 @@ void Lexer::tokenize() {
             case LESS_EQUAL:
             case GREATER_EQUAL:
             case NOT_EQUAL:
-                addTokens(currentLexeme, "relop");
+                currentLexeme += currentChar;
+                addTokens(currentLexeme, mapStateToTokenType(nextState, currentLexeme));
                 currentLexeme.clear();
                 currentState = START;
                 position++;               
-                break;
-            case LESS_THAN:
-            case GREATER_THAN:
-            case NOT:
-                addTokens(currentLexeme, "relop");
-                currentLexeme.clear();
-                currentState = START;
-                break;
-            case DELIMITER:
-                currentLexeme = currentChar;
-                if (currentLexeme == ";") 
-                    tokenType = "semi";
-                else 
-                    tokenType = "comma";
-                addTokens(currentLexeme, tokenType);
-                currentLexeme.clear();
-                currentState = START;
-                position++;
-                break;
-            case BRACE:
-                currentLexeme = currentChar;
-                if (currentLexeme == "{") 
-                    tokenType = "left_brace";
-                else 
-                    tokenType = "right_brace";
-                addTokens(currentLexeme, tokenType);
-                currentLexeme.clear();
-                currentState = START;
-                position++;
-                break;
-            case PAREN:
-                currentLexeme = currentChar;
-                if (currentLexeme == "(") 
-                    tokenType = "right_paren";
-                else 
-                    tokenType = "left_paren";
-                addTokens(currentLexeme, tokenType);
-                currentLexeme.clear();
-                currentState = START;
-                position++;
                 break;
             default:
                 cout << "Invalid State" << endl;
                 break;
         }    
+    }
+    // Handle any left over characters in lexeme
+    if (!currentLexeme.empty()) {
+        addTokens(currentLexeme, "UNKNOWN");
     }
 }
 
