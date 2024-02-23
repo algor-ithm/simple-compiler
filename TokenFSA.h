@@ -8,8 +8,8 @@
 #include <stdexcept>
 using namespace std;
 
-const int NUM_STATES = static_cast<int>(State::S_COUNT);
-const int NUM_INPUTS = static_cast<int>(InputType::I_COUNT);
+const int NUM_STATES = static_cast<int>(S_COUNT);
+const int NUM_INPUTS = static_cast<int>(I_COUNT);
 
 class TokenFSA
 {

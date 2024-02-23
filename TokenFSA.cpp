@@ -48,7 +48,6 @@ void TokenFSA::configJava0FSA() {
         stateTable[DIGIT_S][i] = DIGIT_FINAL;
     }
     stateTable[DIGIT_S][DIGIT] = DIGIT_S;
-    stateTable[DIGIT_S][OTHER] = ERROR;
 
     // Final Digit State
     for (int i = 0; i < I_COUNT; i++) {
