@@ -3,8 +3,10 @@
 
 #include "enumDefinitions.h"
 #include "TokenFSA.h"
+#include <iostream>
 #include <string>
 #include <vector>
+#include <cctype>
 
 using namespace std;
 

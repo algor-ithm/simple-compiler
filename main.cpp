@@ -1,5 +1,6 @@
-#include "TableDrivenFSA.h"
+#include "TokenFSA.h"
 #include "Lexer.h"
+#include <iostream>
 
 using namespace std;
 
@@ -7,8 +8,10 @@ using namespace std;
 
 // add args to pass program to compiler and output file names?
 int main() {
-    // main shit goes here
 
+    TokenFSA fsa;
+    Lexer lexer(fsa);
+    cout << "Hi" << endl;
     // configure fsa for java 0
 
     // create the lexer
@@ -20,4 +23,5 @@ int main() {
     // retrieve tokens and add to token list
 
     // add more to do symbol table, parse etc.
+    return 0;
 }

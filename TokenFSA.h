@@ -3,27 +3,23 @@
 #define TOKENFSA_H
 
 #include "enumDefinitions.h"
+#include <vector>
+#include <tuple>
+#include <stdexcept>
 using namespace std;
 
-const int NUM_STATES = static_cast<int>(State::COUNT);
-const int NUM_INPUTS = static_cast<int>(InputType::COUNT);
+const int NUM_STATES = static_cast<int>(State::S_COUNT);
+const int NUM_INPUTS = static_cast<int>(InputType::I_COUNT);
 
 class TokenFSA
 {
 private:
-    int stateTable[NUM_STATES][NUM_INPUTS];
-    bool finalStates[NUM_STATES];
-
-    void configureFinalStates();
-    void configureTransitions();
+    int stateTable[NUM_STATES][NUM_INPUTS] = {};
+     void configJava0FSA();
 
 public: 
     TokenFSA();
-    void setStateTransition(State state, InputType input, State nextState);
-    int getNextState(State currentState, InputType inputType);
-    void setFinalState(State state);
-    bool isFinalState(State state);
-    void configJava0FSA();
+    State getNextState(State currentState, InputType input);
 };
 
 #endif 
