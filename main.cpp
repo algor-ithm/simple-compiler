@@ -1,5 +1,6 @@
 #include "TokenFSA.h"
 #include "Lexer.h"
+#include "FileHandler.h"
 #include <iostream>
 
 using namespace std;
@@ -7,16 +8,27 @@ using namespace std;
 // read file function
 
 // add args to pass program to compiler and output file names?
-int main() {
+int main(int argc, char* argv[]) {
+    // check that a program file was a command line arguement
+    if (argc < 2) {
+        cerr << "File path required. \n" << "Usage: " << argv[0] << " <filepath>" << endl;
+        return 1;
+    }
+    // Get file path
+    string pgmFile = argv[1];
+    string code;
 
     TokenFSA fsa;
     Lexer lexer(fsa);
-    cout << "Hi" << endl;
-    // configure fsa for java 0
+    FileHandler fHandler;
 
-    // create the lexer
+    // read the program file 
+    code = fHandler.readProgram(pgmFile);
 
-    // read in program file
+    // Set the program as input for the lexer
+    lexer.setInput(code);
+ 
+
 
     // tokenize it
 
