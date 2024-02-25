@@ -12,6 +12,7 @@ textFiles/*.txt
 textFiles/*.tsv
 
 # Ignore executables and build files
+myCompiler
 *.exe
 *.o
 *.obj
@@ -19,13 +20,25 @@ textFiles/*.tsv
 *.so
 *.dylib
 
+# Debug directories
+debug/
+release/
+
+# Log Files
+*.log
+
+# Temporary Files
+*.tmp
+
 # Ignore build directories
 build/
 CMakeFiles/
 CMakeCache.txt
 cmake_install.cmake
 Makefile
-
+bin/
+build/
+obj/
 
 # User-specific files
 *.rsuser
