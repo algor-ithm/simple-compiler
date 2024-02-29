@@ -7,7 +7,7 @@
 using namespace std;
 
 // State enum definitions for token list
-enum State {
+enum TokenState {
     START,                // Initial state (0)
     ERROR,                // error state (1)
     OPERATION,            // operation state (2)
@@ -74,6 +74,14 @@ const unordered_set<string> reservedWords = {
     "CALL",
     "DO",
     "ODD"
+};
+
+enum SymbolState{
+
+};
+
+enum TokenType {
+
 };
 
 #endif

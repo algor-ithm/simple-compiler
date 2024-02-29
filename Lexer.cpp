@@ -25,36 +25,36 @@ const vector<Token>& Lexer::getTokens() const {
 InputType Lexer::charToInputType(char ch) {
     switch (ch) {
         case '*':
-            return InputType::ASTERISK;
+            return ASTERISK;
         case '+':
-            return InputType::PLUS;
+            return PLUS;
         case '-':
-            return InputType::MINUS;
+            return MINUS;
         case '/':
-            return InputType::SLASH;
+            return SLASH;
         case '\n':
-            return InputType::NEWLINE;
+            return NEWLINE;
         case ' ':
         case '\t':
-            return InputType::WHITESPACE;
+            return WHITESPACE;
         case '=':
-            return InputType::EQUALS;
+            return EQUALS;
         case '<':
-            return InputType::LESS;
+            return LESS;
         case '>':
-            return InputType::GREATER;
+            return GREATER;
         case '!':
-            return InputType::EXCLAMATION;
+            return EXCLAMATION;
         case ',':
-            return InputType::COMMA;
+            return COMMA;
         case ';':
-            return InputType::SEMI;
+            return SEMI;
         case '{':
-            return InputType::LEFT_BRACE;
+            return LEFT_BRACE;
         case '}':
-            return InputType::RIGHT_BRACE;
+            return RIGHT_BRACE;
         case '(':
-            return InputType::LEFT_PAREN;
+            return LEFT_PAREN;
         case ')':
             return RIGHT_PAREN;
         default:
@@ -70,43 +70,43 @@ void Lexer::addTokens(const string& lexeme, const string& type) {
 }
 
 // Maps each final state to its corresponding token type
-string Lexer::mapStateToTokenType(State state, const string& lexeme) const {
+string Lexer::mapStateToTokenType(TokenState state, const string& lexeme) const {
     switch(state){
-        case State::OPERATION:
+        case OPERATION:
             if (lexeme == "+") return "ADDOP";
             if (lexeme == "-") return "SUBOP";
             if (lexeme == "*") return "MULOP";
             break;
-        case State::IDENTIFIER_FINAL:
+        case IDENTIFIER_FINAL:
             // deal with keywords
             if (reservedWords.find(lexeme) != reservedWords.end()) {
                 return lexeme; // It is a reserved word return as token type
             } else {
                 return "IDENTIFIER"; // Not reserved treat as identifier
             }   
-        case State::DIGIT_FINAL:
+        case DIGIT_FINAL:
             return "NUMERIC_LITERAL";
-        case State::DIVISION:
+        case DIVISION:
             return "DIVOP";
-        case State::ASSIGNMENT:
+        case ASSIGNMENT:
             return "ASSIGN";
-        case State::EQUALITY:
-        case State::LESS_THAN:
-        case State::LESS_EQUAL:
-        case State::GREATER_THAN:
-        case State::GREATER_EQUAL:
-        case State::NOT:
-        case State::NOT_EQUAL:
+        case EQUALITY:
+        case LESS_THAN:
+        case LESS_EQUAL:
+        case GREATER_THAN:
+        case GREATER_EQUAL:
+        case NOT:
+        case NOT_EQUAL:
             return "RELOP";
-        case State::DELIMITER:
+        case DELIMITER:
             if (lexeme == ",") return "COMMA";
             if (lexeme == ";") return "SEMI";
             break;
-        case State::BRACE:
+        case BRACE:
             if (lexeme == "{") return "LEFT_BRACE";
             if (lexeme == "}") return "RIGHT_BRACE";
             return "RIGHT_BRACE";
-        case State::PAREN:
+        case PAREN:
             if (lexeme == "(") return "LEFT_PAREN";
             if (lexeme == ")") return "RIGHT_PAREN";
             break;
@@ -119,14 +119,14 @@ string Lexer::mapStateToTokenType(State state, const string& lexeme) const {
 
 void Lexer::tokenize() {
     string currentLexeme;
-    State currentState = State::START;
+    TokenState currentState = TokenState::START;
 
     while (position < input.length()) {
         // Get the next char and determine its input type
         char currentChar = input[position];
         InputType charType = charToInputType(currentChar);
         // Get the state to transition to passed on the char
-        State nextState = fsa.getNextState(currentState, charType);
+        TokenState nextState = fsa.getNextState(currentState, charType);
         // Determine course of action based on nextState
         switch(nextState) {
             case START:
@@ -151,9 +151,6 @@ void Lexer::tokenize() {
             case DIGIT_S:
             case IDENTIFIER_S:
             case SLASH_S:
-            case MULTI_LINE:
-            case END_MULTI:
-            case SINGLE_LINE:
             case EQUALS_S:
             case LESS_S:
             case GREATER_S:
@@ -183,6 +180,12 @@ void Lexer::tokenize() {
                 currentState = START;
                 position++;               
                 break;
+            case MULTI_LINE:
+            case SINGLE_LINE:
+            case END_MULTI:
+                position++;
+                currentState = nextState;
+                break;
             default:
                 cout << "Invalid State" << endl;
                 break;
@@ -190,7 +193,8 @@ void Lexer::tokenize() {
     }
     // Handle any left over characters in lexeme
     if (!currentLexeme.empty()) {
-        addTokens(currentLexeme, "UNKNOWN");
+        //cout << "Current State: " << currentState << ", Lexeme: " << currentLexeme;
+        addTokens(currentLexeme, mapStateToTokenType(currentState, currentLexeme));
     }
 }
 

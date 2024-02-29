@@ -19,7 +19,7 @@ private:
 
 public: 
     TokenFSA();
-    State getNextState(State currentState, InputType input);
+    TokenState getNextState(TokenState currentState, InputType input);
 };
 
 #endif 

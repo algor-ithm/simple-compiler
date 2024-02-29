@@ -30,7 +30,7 @@ private:
     // functions
     InputType charToInputType(char ch);
     void addTokens(const string& lexeme, const string& type);
-    string mapStateToTokenType(State state, const string& lexeme) const;
+    string mapStateToTokenType(TokenState state, const string& lexeme) const;
 
 public:
     explicit Lexer(const TokenFSA& fsa);

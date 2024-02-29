@@ -7,13 +7,13 @@ TokenFSA::TokenFSA() {
 }
 
 // gets the nextState to transition from the stateTable
-State TokenFSA::getNextState(State currentState, InputType input) {
+TokenState TokenFSA::getNextState(TokenState currentState, InputType input) {
     // verify state and input are in range
     if (currentState < 0 || currentState >= NUM_STATES || input < 0 || input >= NUM_INPUTS) {
         throw out_of_range("Current state or input is out of range.");
     }
     int nextState = stateTable[currentState][input];
-    return static_cast<State>(nextState);
+    return static_cast<TokenState>(nextState);
 }
 
 void TokenFSA::configJava0FSA() {
@@ -51,7 +51,7 @@ void TokenFSA::configJava0FSA() {
 
     // Final Digit State
     for (int i = 0; i < I_COUNT; i++) {
-        stateTable[State::DIGIT_FINAL][i] = START;
+        stateTable[TokenState::DIGIT_FINAL][i] = START;
     }
 
     // Identifier State
@@ -68,7 +68,7 @@ void TokenFSA::configJava0FSA() {
 
     // Slash State
     for (int i = 0; i < I_COUNT; i++) {
-        stateTable[SLASH_S][i] = State::DIVISION;
+        stateTable[SLASH_S][i] = TokenState::DIVISION;
     }
     stateTable[SLASH_S][ASTERISK] = MULTI_LINE;
     stateTable[SLASH_S][SLASH] = SINGLE_LINE;
@@ -88,7 +88,7 @@ void TokenFSA::configJava0FSA() {
     for (int i = 0; i < I_COUNT; i++) {
         stateTable[END_MULTI][i] = MULTI_LINE;
     }
-    stateTable[MULTI_LINE][SLASH] = START;
+    stateTable[END_MULTI][SLASH] = START;
 
     // Single Line State
     for (int i = 0; i < I_COUNT; i++) {
