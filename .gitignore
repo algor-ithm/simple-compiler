@@ -24,6 +24,9 @@ myCompiler
 debug/
 release/
 
+# VS Code files
+.vscode/
+
 # Log Files
 *.log
 
