@@ -1,6 +1,12 @@
 #ifndef ENUM_DEFINITIONS_H
 #define ENUM_DEFINITIONS_H
 
+#include <unordered_set>
+#include <string>
+
+using namespace std;
+
+// State enum definitions for token list
 enum State {
     START,                // Initial state (0)
     ERROR,                // error state (1)
@@ -32,6 +38,7 @@ enum State {
     S_COUNT               // keeps a count of the number of states
 };
 
+// input tye enums for character types
 enum InputType {
     LETTER,               // Letter a..z, A..Z (0)
     DIGIT,                // Digits 0..9 (1)
@@ -55,5 +62,18 @@ enum InputType {
     I_COUNT               // Keeps a count of the number of input types
 };
 
-// add reserved words?
-#endif 
+// reserved words set to check if an identifier is actually a reserved word
+const unordered_set<string> reservedWords = {
+    "CLASS",
+    "VAR",
+    "CONST",
+    "IF",
+    "WHILE",
+    "THEN",
+    "PROCEDURE",
+    "CALL",
+    "DO",
+    "ODD"
+};
+
+#endif

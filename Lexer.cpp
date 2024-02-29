@@ -78,8 +78,12 @@ string Lexer::mapStateToTokenType(State state, const string& lexeme) const {
             if (lexeme == "*") return "MULOP";
             break;
         case State::IDENTIFIER_FINAL:
-            // deal with keywords?
-            return "IDENTIFIER";
+            // deal with keywords
+            if (reservedWords.find(lexeme) != reservedWords.end()) {
+                return lexeme; // It is a reserved word return as token type
+            } else {
+                return "IDENTIFIER"; // Not reserved treat as identifier
+            }   
         case State::DIGIT_FINAL:
             return "NUMERIC_LITERAL";
         case State::DIVISION:
@@ -131,9 +135,9 @@ void Lexer::tokenize() {
                 position++;
                 break;
             case ERROR:
-                cout << "Invalid character read in." << endl;
-                break;
+                cout << "Invalid character read in: " << currentChar << endl;
                 position++;
+                break;
             case OPERATION:
             case DELIMITER:
             case BRACE:
