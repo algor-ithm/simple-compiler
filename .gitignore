@@ -25,7 +25,7 @@ debug/
 release/
 
 # VS Code files
-.vscode/
+.vscode/*
 
 # Log Files
 *.log
