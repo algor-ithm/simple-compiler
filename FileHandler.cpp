@@ -7,6 +7,8 @@ string FileHandler::readProgram(const string &filePath) const {
     }
     string buffer((std::istreambuf_iterator<char>(pgmFile)),
                          std::istreambuf_iterator<char>());
+    
+    pgmFile.close();
     return buffer;
 }
 
