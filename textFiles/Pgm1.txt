@@ -1,0 +1,7 @@
+CLASS HopeAndPray {
+    /* comment testing */
+    CONST got = 7, cha = 85, going = 52;
+    VAR today, yeah;
+    today = got * going / yeah + 82;
+    yeah = today + 17;
+}
