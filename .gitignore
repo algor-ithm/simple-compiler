@@ -4,12 +4,12 @@
 ## Get latest from https://github.com/github/gitignore/blob/main/VisualStudio.gitignore
 
 # All text files
-*.txt
-*.tsv
+#*.txt
+#*.tsv
 
 # Ignore text files in specific directory
-textFiles/*.txt
-textFiles/*.tsv
+#textFiles/*.txt
+#textFiles/*.tsv
 
 # Ignore executables and build files
 myCompiler
