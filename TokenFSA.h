@@ -1,6 +1,6 @@
 // This table driven FSA is specifically intended for the Java 0 language
-#ifndef TOKENFSA_H
-#define TOKENFSA_H
+#ifndef TokenFSA_H
+#define TokenFSA_H
 
 #include "enumDefinitions.h"
 #include <vector>
@@ -8,13 +8,13 @@
 #include <stdexcept>
 using namespace std;
 
-const int NUM_STATES = static_cast<int>(S_COUNT);
-const int NUM_INPUTS = static_cast<int>(I_COUNT);
+const int NUM_STATES = S_COUNT;
+const int NUM_INPUTS = I_COUNT;
 
 class TokenFSA
 {
 private:
-    int stateTable[NUM_STATES][NUM_INPUTS] = {};
+    int TokenTable[NUM_STATES][NUM_INPUTS] = {};
      void configJava0FSA();
 
 public: 

@@ -26,5 +26,6 @@ void FileHandler::writeTokenList(const vector<Token>& tokens) {
     for (const auto& token : tokens){
         tokenFile << token.lexeme << "\t" << token.type << "\n";
     }
+    tokenFile << "EOF" << "\n";
     tokenFile.close();
 }
