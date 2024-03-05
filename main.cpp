@@ -1,5 +1,4 @@
-#include "TokenFSA.h"
-#include "Lexer.h"
+#include "Tokenizer.h"
 #include "FileHandler.h"
 #include <iostream>
 
@@ -11,9 +10,8 @@ using namespace std;
 int main(int argc, char* argv[]) {
     string code;
     vector<Token> tokenList;
-    TokenFSA fsa;
-    Lexer lexer(fsa);
     FileHandler fHandler;
+    Tokenizer tokenizer;
 
     // check that a program file was a command line arguement
     if (argc < 2) {
@@ -30,10 +28,10 @@ int main(int argc, char* argv[]) {
     }
     // Set the program as input for the lexer
     //cout << code << endl;
-    lexer.setInput(code);
+    tokenizer.setInput(code);
     //Tokenize the program and retrieve token list 
-    lexer.tokenize();
-    tokenList = lexer.getTokens();
+    tokenizer.tokenize();
+    tokenList = tokenizer.getTokens();
     // Write token list to a file
     fHandler.writeTokenList(tokenList);
 

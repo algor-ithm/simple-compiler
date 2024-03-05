@@ -76,12 +76,42 @@ const unordered_set<string> reservedWords = {
     "ODD"
 };
 
+// states for Symbol Table FSA
 enum SymbolState{
-
+    START_S,            // Start State (0)
+    CLASS_READ,         // Reading class token state (1)
+    PGM_NAME,           // Expecting program name state (2)
+    PGM_START,          // Start of program body state (3)
+    CONST_DEC,          // Constant variable decleration state (4)
+    CONST_NAME,         // Constant variable name state (5)
+    CONST_ASSIGN,       // Constant variable = state (6)
+    CONST_VAL,          // Constant integer value state (7)
+    VAR_DEC,            // Variable decleration state (8)
+    VAR_NAME,           // Variable name state (9)
+    PROC_DEC,           // Procedure delceration sate (10)
+    PROC_NAME,          // Procedure name state (11)
+    PGM_BODY,           // Body of the program state (12)
+    NUM_LIT,            // Numeric literal state (13)
+    END_STATE,          // End of file state (done with pass) (14)
+    SS_COUNT            // Count of the number of symbol states
 };
 
+// token (fsa input) for Symbol Table FSA
 enum TokenType {
-
+    CLASS,              // Class token type (0)
+    CONST,              // Const token type (1)
+    VAR,                // Var decleration token type (2)
+    IDENTIFIER,         // Identifier state (3)
+    NUMERIC_LIT,        // Numerical literal token type (4)
+    PROCEDURE,          // Procedure decleration token type (5)
+    ASSIGN,             // Assignment (=) token type (6)
+    SEMICOLON,          // Semicolon (;) token type (7)
+    COMMA_T,            // Comma (,) token type (8)
+    R_BRACE,            // Right brace ({) token type (9)
+    R_PAREN,            // Right parenthesis token type (10)
+    END_FILE,           // EOF string (11)
+    OTHER_T,            // All other token types (12)
+    TT_COUNT            // Count of the number of token types
 };
 
 #endif

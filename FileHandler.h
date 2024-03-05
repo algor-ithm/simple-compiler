@@ -1,7 +1,7 @@
 #ifndef FILEHANDLER_H
 #define FILEHANDLER_H
 
-#include "Lexer.h"
+#include "Tokenizer.h"
 #include <iostream>
 #include <fstream>
 #include <string>

@@ -1,14 +1,11 @@
-#ifndef LEXER_H
-#define LEXER_H
+#ifndef TOKENIZER_H
+#define TOKENIZER_H
 
 #include "enumDefinitions.h"
-#include "TokenFSA.h"
 #include <iostream>
-#include <string>
 #include <vector>
+#include <string>
 #include <cctype>
-
-using namespace std;
 
 // Define the token Struct
 struct Token {
@@ -16,24 +13,25 @@ struct Token {
     string type;
 
     // Token constructor
-    Token(const string& lexeme, const string& type);
+    Token(const string& lex, const string& lexType) 
+        : lexeme(lex), type(lexType) {}
 };
 
-class Lexer
+class Tokenizer
 {
 private:
-    // variables
-    TokenFSA fsa;
+    int tokenStateTable[S_COUNT][I_COUNT] = {};
+    vector<Token> tokens;
     string input;
     size_t position = 0;
-    vector<Token> tokens;
-    // functions
+    void configJava0FSA();
     InputType charToInputType(char ch);
     void addTokens(const string& lexeme, const string& type);
     string mapStateToTokenType(TokenState state, const string& lexeme) const;
+    TokenState getNextTokenState(TokenState currentState, InputType input);
 
 public:
-    explicit Lexer(const TokenFSA& fsa);
+    Tokenizer();
     void setInput(const string& newInput);
     void tokenize();
     const vector<Token>& getTokens() const;

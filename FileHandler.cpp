@@ -13,7 +13,7 @@ string FileHandler::readProgram(const string &filePath) const {
 }
 
 void FileHandler::writeTokenList(const vector<Token>& tokens) {
-    const string filename = "textFiles/token-list.tsv";
+    const string filename = "textFiles/token-list.txt";
 
     ofstream tokenFile(filename);
     if (!tokenFile.is_open()) {
@@ -26,6 +26,5 @@ void FileHandler::writeTokenList(const vector<Token>& tokens) {
     for (const auto& token : tokens){
         tokenFile << token.lexeme << "\t" << token.type << "\n";
     }
-    tokenFile << "EOF" << "\n";
     tokenFile.close();
 }
