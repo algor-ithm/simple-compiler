@@ -8,8 +8,7 @@
 #*.tsv
 
 # Ignore text files in specific directory
-#textFiles/*.txt
-#textFiles/*.tsv
+textFiles/token-list.txt
 
 # Ignore executables and build files
 myCompiler
