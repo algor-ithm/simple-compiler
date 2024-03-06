@@ -9,6 +9,7 @@
 
 # Ignore text files in specific directory
 textFiles/token-list.txt
+textFiles/symbol-table.txt
 
 # Ignore executables and build files
 myCompiler
