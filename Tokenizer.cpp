@@ -164,7 +164,7 @@ const vector<Token>& Tokenizer::getTokens() const {
 
 // Add a new token to the token vector
 void Tokenizer::addTokens(const string& lexeme, const string& type) {
-    tokens.push_back(Token(lexeme, type));
+    tokens.emplace_back(Token(lexeme, type));
 }
 
 // Converts a character to its corresponding input

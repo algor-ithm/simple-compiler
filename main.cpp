@@ -10,8 +10,10 @@ using namespace std;
 int main(int argc, char* argv[]) {
     string code;
     vector<Token> tokenList;
+    vector<SymbolTableEntry> symbolTable;
     FileHandler fHandler;
     Tokenizer tokenizer;
+    SymbolTableBuilder stBuilder;
 
     // check that a program file was a command line arguement
     if (argc < 2) {
@@ -34,6 +36,9 @@ int main(int argc, char* argv[]) {
     tokenList = tokenizer.getTokens();
     // Write token list to a file
     fHandler.writeTokenList(tokenList);
+    stBuilder.buildSymbolTable(tokenList);
+    symbolTable = stBuilder.getSymbolTable();
+    fHandler.writeSymbolTable(symbolTable);
 
 
     // add more to do symbol table, parse etc.

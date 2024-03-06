@@ -107,7 +107,7 @@ enum TokenType {
     ASSIGN,             // Assignment (=) token type (6)
     SEMICOLON,          // Semicolon (;) token type (7)
     COMMA_T,            // Comma (,) token type (8)
-    R_BRACE,            // Right brace ({) token type (9)
+    L_BRACE,            // Left brace ({) token type (9)
     R_PAREN,            // Right parenthesis token type (10)
     END_FILE,           // EOF string (11)
     OTHER_T,            // All other token types (12)

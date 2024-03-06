@@ -20,7 +20,7 @@ void SymbolTableBuilder::configSymbolTableFSA() {
     // Read class state
     symbolStateTable[CLASS_READ][IDENTIFIER] = PGM_NAME;
     // Read program name state
-    symbolStateTable[PGM_NAME][R_BRACE] = PGM_START;
+    symbolStateTable[PGM_NAME][L_BRACE] = PGM_START;
     // Start of program body
     for (int i = 0; i < TT_COUNT; i++){
         symbolStateTable[PGM_START][i] = PGM_BODY;
@@ -86,8 +86,87 @@ TokenType SymbolTableBuilder::mapStringTypeToTokenType(const string& tokenType){
     if(tokenType == "ASSIGN") return ASSIGN;
     if(tokenType == "SEMI") return SEMICOLON;
     if(tokenType == "COMMA") return COMMA_T;
-    if(tokenType == "RIGHT_BRACE") return R_BRACE;
+    if(tokenType == "LEFT_BRACE") return L_BRACE;
     if(tokenType == "RIGHT_PAREN") return R_PAREN;
     if(tokenType == "EOF") return END_FILE;
     return OTHER_T;
+}
+
+void SymbolTableBuilder::addToSymbolTable(const string& token, const string& type, const string& value, int addr, const string& segment) {
+    symbolList.emplace_back(SymbolTableEntry(token, type, value, to_string(addr), segment));
+}
+
+vector<SymbolTableEntry> SymbolTableBuilder::getSymbolTable(){
+    return symbolList;
+}
+
+void SymbolTableBuilder::buildSymbolTable(const vector<Token>& tokens){
+    SymbolState currentState = START_S;
+    string currentToken, currentType, currentValue;
+    int codeAddress = 0;
+    int dataAddress = 0;
+
+    for (const auto& token : tokens){
+        TokenType tokenType = mapStringTypeToTokenType(token.type);
+        SymbolState nextState = getNextSymbolState(currentState, tokenType);
+
+        if(nextState == -1)
+            continue; // Skip invalid transtions
+
+        switch(nextState) {
+            case CLASS_READ:
+                break;
+            case PGM_NAME:
+                currentToken = token.lexeme;
+                currentType = "PROGRAM_NAME";
+                addToSymbolTable(currentToken, currentType, "?", codeAddress, "code");
+                codeAddress += 2;
+                break;
+            case PGM_START:
+                break;
+            case CONST_DEC:
+                break;
+            case CONST_NAME:
+                currentToken = token.lexeme;
+                currentType = "CONSTVAR";
+                break;
+            case CONST_ASSIGN:
+                break;
+            case CONST_VAL:
+                currentValue = token.lexeme;
+                addToSymbolTable(currentToken, currentType, currentValue, dataAddress, "data");
+                dataAddress += 2;
+                break;
+            case VAR_DEC:
+                break;
+            case VAR_NAME:
+                currentToken = token.lexeme;
+                currentType = token.type;
+                addToSymbolTable(currentToken, currentType, "?", dataAddress, "data");
+                dataAddress += 2;
+                break;
+            case PROC_DEC:
+                break;
+            case PROC_NAME:
+                currentToken = token.lexeme;
+                currentType = "PROCEDURE";
+                addToSymbolTable(currentToken, currentType, "?", codeAddress, "code");
+                codeAddress += 2;
+                break;
+            case PGM_BODY:
+                break;
+            case NUM_LIT:
+                currentToken = token.lexeme;
+                currentType = token.type;
+                currentValue = token.lexeme;
+                addToSymbolTable(currentToken, currentType, currentValue, dataAddress, "data");
+                dataAddress += 2;
+                break;
+            case END_STATE:
+                return;
+        }
+        cout << "current state:" << currentState << "\nNextState: " << nextState << endl;
+        currentState = nextState;
+        
+    }
 }

@@ -28,3 +28,21 @@ void FileHandler::writeTokenList(const vector<Token>& tokens) {
     }
     tokenFile.close();
 }
+
+void FileHandler::writeSymbolTable(const vector<SymbolTableEntry>& symbolList){
+    const string filename = "textFiles/symbol-table.txt";
+
+    ofstream symbolFile(filename);
+    if(!symbolFile.is_open()){
+        throw runtime_error("Could not open file: " + filename);
+    }
+    // Write header line (if needed?)
+    symbolFile << "Token\tType\tValue\tAddress\tSegement\n";
+
+    // Iterate through symbol list and write each one to the file
+    for (const auto& symbol : symbolList){
+        symbolFile << symbol.token << "\t" << symbol.type << "\t" << symbol.value << "\t" 
+            << symbol.address << "\t" << symbol.segment << "\n";
+    }
+    symbolFile.close();
+}

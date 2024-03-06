@@ -2,6 +2,7 @@
 #define FILEHANDLER_H
 
 #include "Tokenizer.h"
+#include "SymbolTableBuilder.h"
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -19,10 +20,8 @@ public:
     string readProgram(const string &filePath) const;
     // write token list to file
     void writeTokenList(const vector<Token>& tokens);
-    // read token list file
-    void readTokenList();
     // write symbol table file
-    void writeSymbolTable();
+    void writeSymbolTable(const vector <SymbolTableEntry>& symbolList);
 };
 
 #endif
