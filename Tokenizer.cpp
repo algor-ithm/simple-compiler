@@ -337,5 +337,6 @@ void Tokenizer::tokenize() {
         //cout << "Current State: " << currentState << ", Lexeme: " << currentLexeme;
         addTokens(currentLexeme, mapStateToTokenType(currentState, currentLexeme));
     }
+    // add EOF character?
     addTokens("EOF", "EOF");
 }

@@ -163,9 +163,15 @@ void SymbolTableBuilder::buildSymbolTable(const vector<Token>& tokens){
                 dataAddress += 2;
                 break;
             case END_STATE:
+                // add temp varaibles (3 to start can add more)
+                addToSymbolTable("temp1", "INTVAR", "?", dataAddress, "data");
+                dataAddress += 2;
+                addToSymbolTable("temp2", "INTVAR", "?", dataAddress, "data");
+                dataAddress += 2;
+                addToSymbolTable("temp3", "INTVAR", "?", dataAddress, "data");
+                dataAddress += 2;
                 return;
         }
-        cout << "current state:" << currentState << "\nNextState: " << nextState << endl;
         currentState = nextState;
         
     }
