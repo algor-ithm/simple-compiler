@@ -20,11 +20,11 @@ struct SymbolTableEntry {
         : token(t), type(tt), value(val), address(addr), segment(seg) {}
 };
 
-class SymbolTableBuilder
-{
-
+class SymbolTableBuilder {
 private:
-    int symbolStateTable[SS_COUNT][TT_COUNT] = {};
+    // Use -1 to denote invalid state transitions (error handling later?)
+    const int INVALID_STATE = -1;
+    int symbolStateTable[SS_COUNT][TT_COUNT];
     vector<SymbolTableEntry> symbolList;
     void configSymbolTableFSA();
     SymbolState getNextSymbolState(SymbolState currState, TokenType token);
@@ -35,9 +35,6 @@ public:
     SymbolTableBuilder();
     void buildSymbolTable(const vector<Token>& tokens);
     vector<SymbolTableEntry> getSymbolTable();
-
-
-
 };
 
 #endif

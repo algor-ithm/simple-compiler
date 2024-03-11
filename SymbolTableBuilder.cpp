@@ -1,13 +1,10 @@
 #include "SymbolTableBuilder.h"
 
-SymbolTableBuilder::SymbolTableBuilder()
-{
+SymbolTableBuilder::SymbolTableBuilder() {
     configSymbolTableFSA();
 }
 
 void SymbolTableBuilder::configSymbolTableFSA() {
-    // Use -1 to denote invalid state transitions (error handling later?)
-    const int INVALID_STATE = -1;
     // Fill entire table with -1 initially
     for(int i = 0; i < SS_COUNT; i++) {
         for (int j = 0; j < TT_COUNT; j++) {
@@ -46,7 +43,7 @@ void SymbolTableBuilder::configSymbolTableFSA() {
     // Procedure decleration state
     symbolStateTable[PROC_DEC][IDENTIFIER] = PROC_NAME;
     // Procedure name state
-    symbolStateTable[PROC_NAME][R_PAREN] = PGM_START;
+    symbolStateTable[PROC_NAME][L_PAREN] = PGM_START;
     // Program body state
     for (int i = 0; i < TT_COUNT; i++) {
         symbolStateTable[PGM_BODY][i] = PGM_BODY;
@@ -76,6 +73,7 @@ SymbolState SymbolTableBuilder::getNextSymbolState(SymbolState currState, TokenT
     return static_cast<SymbolState>(nextState);
 }
 
+// map the token list token type to FSA TokenType
 TokenType SymbolTableBuilder::mapStringTypeToTokenType(const string& tokenType){
     if(tokenType == "CLASS") return CLASS;
     if(tokenType == "CONST") return CONST;
@@ -87,31 +85,37 @@ TokenType SymbolTableBuilder::mapStringTypeToTokenType(const string& tokenType){
     if(tokenType == "SEMI") return SEMICOLON;
     if(tokenType == "COMMA") return COMMA_T;
     if(tokenType == "LEFT_BRACE") return L_BRACE;
-    if(tokenType == "RIGHT_PAREN") return R_PAREN;
+    if(tokenType == "LEFT_PAREN") return L_PAREN;
     if(tokenType == "EOF") return END_FILE;
     return OTHER_T;
 }
 
+// Add symbol to symbol vecotr
 void SymbolTableBuilder::addToSymbolTable(const string& token, const string& type, const string& value, int addr, const string& segment) {
     symbolList.emplace_back(SymbolTableEntry(token, type, value, to_string(addr), segment));
 }
 
+// return symbol list
 vector<SymbolTableEntry> SymbolTableBuilder::getSymbolTable(){
     return symbolList;
 }
 
+// build the symbol table with symbol table FSA
 void SymbolTableBuilder::buildSymbolTable(const vector<Token>& tokens){
     SymbolState currentState = START_S;
     string currentToken, currentType, currentValue;
     int codeAddress = 0;
     int dataAddress = 0;
 
+    // Process each token from the token list
     for (const auto& token : tokens){
+        // get the token type
         TokenType tokenType = mapStringTypeToTokenType(token.type);
         SymbolState nextState = getNextSymbolState(currentState, tokenType);
 
-        if(nextState == -1)
-            continue; // Skip invalid transtions
+        // If invalid just continue to next token (error handle later)
+        if(nextState == INVALID_STATE)
+            continue; 
 
         switch(nextState) {
             case CLASS_READ:
@@ -173,6 +177,5 @@ void SymbolTableBuilder::buildSymbolTable(const vector<Token>& tokens){
                 return;
         }
         currentState = nextState;
-        
     }
 }

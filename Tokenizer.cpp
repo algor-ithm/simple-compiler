@@ -1,7 +1,6 @@
 #include "Tokenizer.h"
 
-Tokenizer::Tokenizer()
-{
+Tokenizer::Tokenizer() {
     configJava0FSA();
 }
 

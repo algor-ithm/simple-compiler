@@ -17,8 +17,7 @@ struct Token {
         : lexeme(lex), type(lexType) {}
 };
 
-class Tokenizer
-{
+class Tokenizer {
 private:
     int tokenStateTable[S_COUNT][I_COUNT] = {};
     vector<Token> tokens;

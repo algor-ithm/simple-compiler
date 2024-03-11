@@ -1,10 +1,9 @@
 #include "Tokenizer.h"
 #include "FileHandler.h"
+#include "SymbolTableBuilder.h"
 #include <iostream>
 
 using namespace std;
-
-// read file function
 
 // add args to pass program to compiler and output file names?
 int main(int argc, char* argv[]) {
@@ -33,14 +32,14 @@ int main(int argc, char* argv[]) {
     tokenizer.setInput(code);
     //Tokenize the program and retrieve token list 
     tokenizer.tokenize();
-    tokenList = tokenizer.getTokens();
     // Write token list to a file
+    tokenList = tokenizer.getTokens();
     fHandler.writeTokenList(tokenList);
+    // Build the symbol talbe
     stBuilder.buildSymbolTable(tokenList);
+    // Write symbol table to a file
     symbolTable = stBuilder.getSymbolTable();
     fHandler.writeSymbolTable(symbolTable);
-
-
-    // add more to do symbol table, parse etc.
+    // add more to do: syntax, semantics, etc.
     return 0;
 }
