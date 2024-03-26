@@ -114,4 +114,30 @@ enum TokenType {
     TT_COUNT            // Count of the number of token types
 };
 
+enum ParserOperators {
+    OP_SEMI,            // [;] semicolon (0)
+    OP_ASSIGN,          // [=] assignment (1)
+    OP_ADD,             // [+] addition (2)
+    OP_SUB,             // [-] subtraction (3)
+    OP_LPAREN,          // [(] left parentheses (4)
+    OP_RPAREN,          // [)] right parentheses (5)
+    OP_MUL,             // [*] multiply (6)
+    OP_DIV,             // [/] divide (7)
+    OP_IF,              // [if] reserved word (8)
+    OP_THEN,            // [then] reserved word (9)
+    OP_WHILE,           // [while] reserved word (10)
+    OP_DO,              // [do] reserved word (11)
+    OP_ODD,             // [odd] reserved word (12) 
+    OP_EQ,              // [==] equality relop (13)
+    OP_NE,              // [!=] not equal relop (14)    
+    OP_GT,              // [>] greater than relop (15)
+    OP_LT,              // [<] less than relop (16)
+    OP_GTE,             // [>=] greater than or equal relop (17)
+    OP_LTE,             // [<=] less than or equal relop (18)
+    OP_LBRACE,          // [{] left brace (19)
+    OP_RBRACE,          // [}] right brace (20)
+    OP_CALL,            // [call] reserved word (20)
+    PO_COUNT            // Operator count 
+};
+
 #endif
