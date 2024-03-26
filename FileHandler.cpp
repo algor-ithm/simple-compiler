@@ -12,7 +12,7 @@ string FileHandler::readProgram(const string &filePath) const {
     return buffer;
 }
 
-void FileHandler::writeTokenList(const vector<Token>& tokens) {
+void FileHandler::writeTokenList(const Token* tokens, int tokenCount) {
     const string filename = "textFiles/token-list.txt";
 
     ofstream tokenFile(filename);
@@ -23,13 +23,13 @@ void FileHandler::writeTokenList(const vector<Token>& tokens) {
     tokenFile << "Lexeme\tTokenType\n";
 
     // Iterate through vector and write each token with its type
-    for (const auto& token : tokens){
-        tokenFile << token.lexeme << "\t" << token.type << "\n";
+    for(int i = 0; i < tokenCount; i++) {
+        tokenFile << tokens[i].lexeme << "\t" << tokens[i].type << "\n";
     }
     tokenFile.close();
 }
 
-void FileHandler::writeSymbolTable(const vector<SymbolTableEntry>& symbolList){
+void FileHandler::writeSymbolTable(const SymbolTableEntry* symbolList, int symbolCount){
     const string filename = "textFiles/symbol-table.txt";
 
     ofstream symbolFile(filename);
@@ -40,9 +40,11 @@ void FileHandler::writeSymbolTable(const vector<SymbolTableEntry>& symbolList){
     symbolFile << "Token\tType\tValue\tAddress\tSegement\n";
 
     // Iterate through symbol list and write each one to the file
-    for (const auto& symbol : symbolList){
-        symbolFile << symbol.token << "\t" << symbol.type << "\t" << symbol.value << "\t" 
-            << symbol.address << "\t" << symbol.segment << "\n";
+    for (int i = 0; i < symbolCount; i++){
+        symbolFile << symbolList[i].token << "\t" << symbolList[i].type << "\t" << symbolList[i].value << "\t" 
+            << symbolList[i].address << "\t" << symbolList[i].segment << "\n";
     }
     symbolFile.close();
 }
+
+//write quads?

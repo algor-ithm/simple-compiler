@@ -8,9 +8,13 @@
 #include <cctype>
 
 // Define the token Struct
+const int MAX_TOKENS = 1000;
 struct Token {
     string lexeme;
     string type;
+
+    // Default constructor
+    Token() : lexeme(""), type("") {}
 
     // Token constructor
     Token(const string& lex, const string& lexType) 
@@ -20,7 +24,9 @@ struct Token {
 class Tokenizer {
 private:
     int tokenStateTable[S_COUNT][I_COUNT] = {};
-    vector<Token> tokens;
+    Token tokens[MAX_TOKENS];
+    int tokenCount = 0;
+    //vector<Token> tokens;
     string input;
     size_t position = 0;
     void configJava0FSA();
@@ -33,7 +39,8 @@ public:
     Tokenizer();
     void setInput(const string& newInput);
     void tokenize();
-    const vector<Token>& getTokens() const;
+    const Token* getTokens() const;
+    int getTokenCount() const;
 };
 
 #endif

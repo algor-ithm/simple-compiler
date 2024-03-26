@@ -153,17 +153,26 @@ TokenState Tokenizer::getNextTokenState(TokenState currentState, InputType input
 void Tokenizer::setInput(const string& newInput) {
     input = newInput;
     position = 0;
-    tokens.clear(); // Clear previous tokens
+    tokenCount = 0; // Clear previous tokens
 }
 
 // Get the vector of tokens
-const vector<Token>& Tokenizer::getTokens() const {
+const Token* Tokenizer::getTokens() const {
     return tokens;
+}
+
+int Tokenizer::getTokenCount() const {
+    return tokenCount;
 }
 
 // Add a new token to the token vector
 void Tokenizer::addTokens(const string& lexeme, const string& type) {
-    tokens.emplace_back(Token(lexeme, type));
+    if (tokenCount < MAX_TOKENS){
+        tokens[tokenCount++] = Token(lexeme, type);
+    } else {
+        cerr << "Token array is full, cannot add more tokens." << endl;
+    }
+    //tokens.emplace_back(Token(lexeme, type));
 }
 
 // Converts a character to its corresponding input
@@ -245,7 +254,7 @@ string Tokenizer::mapStateToTokenType(TokenState state, const string& lexeme) co
         case BRACE:
             if (lexeme == "{") return "LEFT_BRACE";
             if (lexeme == "}") return "RIGHT_BRACE";
-            return "RIGHT_BRACE";
+            break;
         case PAREN:
             if (lexeme == "(") return "LEFT_PAREN";
             if (lexeme == ")") return "RIGHT_PAREN";

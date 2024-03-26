@@ -19,9 +19,10 @@ private:
 public:
     string readProgram(const string &filePath) const;
     // write token list to file
-    void writeTokenList(const vector<Token>& tokens);
+    void writeTokenList(const Token* tokens, int tokenCount);
     // write symbol table file
-    void writeSymbolTable(const vector <SymbolTableEntry>& symbolList);
+    void writeSymbolTable(const SymbolTableEntry* symbolList, int symbolCount);
+    // write quads?
 };
 
 #endif

@@ -8,8 +8,8 @@ using namespace std;
 // add args to pass program to compiler and output file names?
 int main(int argc, char* argv[]) {
     string code;
-    vector<Token> tokenList;
-    vector<SymbolTableEntry> symbolTable;
+    //const SymbolTableEntry symbolTable
+    //vector<SymbolTableEntry> symbolTable;
     FileHandler fHandler;
     Tokenizer tokenizer;
     SymbolTableBuilder stBuilder;
@@ -33,13 +33,15 @@ int main(int argc, char* argv[]) {
     //Tokenize the program and retrieve token list 
     tokenizer.tokenize();
     // Write token list to a file
-    tokenList = tokenizer.getTokens();
-    fHandler.writeTokenList(tokenList);
+    const Token* tokenList = tokenizer.getTokens();
+    int tokenCount = tokenizer.getTokenCount();
+    fHandler.writeTokenList(tokenList, tokenCount);
     // Build the symbol talbe
-    stBuilder.buildSymbolTable(tokenList);
+    stBuilder.buildSymbolTable(tokenList, tokenCount);
     // Write symbol table to a file
-    symbolTable = stBuilder.getSymbolTable();
-    fHandler.writeSymbolTable(symbolTable);
+    const SymbolTableEntry* symbolTable = stBuilder.getSymbolTable();
+    int symbolCount = stBuilder.getSymbolCount();
+    fHandler.writeSymbolTable(symbolTable, symbolCount);
     // add more to do: syntax, semantics, etc.
     return 0;
 }

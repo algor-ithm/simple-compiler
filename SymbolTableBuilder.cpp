@@ -92,25 +92,34 @@ TokenType SymbolTableBuilder::mapStringTypeToTokenType(const string& tokenType){
 
 // Add symbol to symbol vecotr
 void SymbolTableBuilder::addToSymbolTable(const string& token, const string& type, const string& value, int addr, const string& segment) {
-    symbolList.emplace_back(SymbolTableEntry(token, type, value, to_string(addr), segment));
+    if (symbolCount < MAX_SYMBOLS){
+        symbolList[symbolCount++] = SymbolTableEntry(token, type, value, to_string(addr), segment);
+    } else {
+
+    }
+    //symbolList.emplace_back(SymbolTableEntry(token, type, value, to_string(addr), segment));
 }
 
 // return symbol list
-vector<SymbolTableEntry> SymbolTableBuilder::getSymbolTable(){
+const SymbolTableEntry* SymbolTableBuilder::getSymbolTable() const {
     return symbolList;
 }
 
+int SymbolTableBuilder::getSymbolCount() const {
+    return symbolCount;
+}
+
 // build the symbol table with symbol table FSA
-void SymbolTableBuilder::buildSymbolTable(const vector<Token>& tokens){
+void SymbolTableBuilder::buildSymbolTable(const Token* tokens, int tokenCount){
     SymbolState currentState = START_S;
     string currentToken, currentType, currentValue;
     int codeAddress = 0;
     int dataAddress = 0;
 
     // Process each token from the token list
-    for (const auto& token : tokens){
+    for (int i = 0; i < tokenCount; i++){
         // get the token type
-        TokenType tokenType = mapStringTypeToTokenType(token.type);
+        TokenType tokenType = mapStringTypeToTokenType(tokens[i].type);
         SymbolState nextState = getNextSymbolState(currentState, tokenType);
 
         // If invalid just continue to next token (error handle later)
@@ -121,7 +130,7 @@ void SymbolTableBuilder::buildSymbolTable(const vector<Token>& tokens){
             case CLASS_READ:
                 break;
             case PGM_NAME:
-                currentToken = token.lexeme;
+                currentToken = tokens[i].lexeme;
                 currentType = "PROGRAM_NAME";
                 addToSymbolTable(currentToken, currentType, "?", codeAddress, "code");
                 codeAddress += 2;
@@ -131,28 +140,28 @@ void SymbolTableBuilder::buildSymbolTable(const vector<Token>& tokens){
             case CONST_DEC:
                 break;
             case CONST_NAME:
-                currentToken = token.lexeme;
+                currentToken = tokens[i].lexeme;
                 currentType = "CONSTVAR";
                 break;
             case CONST_ASSIGN:
                 break;
             case CONST_VAL:
-                currentValue = token.lexeme;
+                currentValue = tokens[i].lexeme;
                 addToSymbolTable(currentToken, currentType, currentValue, dataAddress, "data");
                 dataAddress += 2;
                 break;
             case VAR_DEC:
                 break;
             case VAR_NAME:
-                currentToken = token.lexeme;
-                currentType = token.type;
+                currentToken = tokens[i].lexeme;
+                currentType = tokens[i].type;
                 addToSymbolTable(currentToken, currentType, "?", dataAddress, "data");
                 dataAddress += 2;
                 break;
             case PROC_DEC:
                 break;
             case PROC_NAME:
-                currentToken = token.lexeme;
+                currentToken = tokens[i].lexeme;
                 currentType = "PROCEDURE";
                 addToSymbolTable(currentToken, currentType, "?", codeAddress, "code");
                 codeAddress += 2;
@@ -160,9 +169,9 @@ void SymbolTableBuilder::buildSymbolTable(const vector<Token>& tokens){
             case PGM_BODY:
                 break;
             case NUM_LIT:
-                currentToken = token.lexeme;
-                currentType = token.type;
-                currentValue = token.lexeme;
+                currentToken = tokens[i].lexeme;
+                currentType = tokens[i].type;
+                currentValue = tokens[i].lexeme;
                 addToSymbolTable(currentToken, currentType, currentValue, dataAddress, "data");
                 dataAddress += 2;
                 break;
