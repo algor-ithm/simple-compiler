@@ -114,7 +114,7 @@ enum TokenType {
     TT_COUNT            // Count of the number of token types
 };
 
-enum ParserOperators {
+enum ParserOps {
     OP_SEMI,            // [;] semicolon (0)
     OP_ASSIGN,          // [=] assignment (1)
     OP_ADD,             // [+] addition (2)
@@ -137,7 +137,8 @@ enum ParserOperators {
     OP_LBRACE,          // [{] left brace (19)
     OP_RBRACE,          // [}] right brace (20)
     OP_CALL,            // [call] reserved word (20)
-    PO_COUNT            // Operator count 
+    OP_COUNT,           // Operator count 
+    NON_OP              // Used the represent non terminals (not part of table)
 };
 
 #endif

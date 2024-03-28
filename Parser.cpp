@@ -1,15 +1,14 @@
 #include "Parser.h"
 
-Parser::Parser()
-{
+Parser::Parser() {
     configOpTable();
 }
 
-void Parser::configOpTable()
-{
-    for (int i = 0; i < PO_COUNT; i++)
+// Initialize operator precedence table 
+void Parser::configOpTable() {
+    for (int i = 0; i < OP_COUNT; i++)
     {
-        for (int j = 0; j < PO_COUNT; j++)
+        for (int j = 0; j < OP_COUNT; j++)
         {
             opPrecedence[i][j] = '?';
         }
@@ -208,4 +207,94 @@ void Parser::configOpTable()
     opPrecedence[OP_LBRACE][OP_WHILE] = '<';
     opPrecedence[OP_LBRACE][OP_RBRACE] = '=';
     opPrecedence[OP_LBRACE][OP_CALL] = '<';
+}
+
+// get precedence relation from table 
+char Parser::getRelation(ParserOps op1, ParserOps op2) {
+    if (op1 < 0 || op1 >= OP_COUNT || op2 < 0 || op2 >= OP_COUNT) {
+       throw out_of_range("One or more of the operators is out of range.");
+    } 
+    return opPrecedence[op1][op2];  
+}
+
+string Parser::generateLabel() {
+    return "L" + to_string(labelCount++);
+}
+
+ParserOps Parser::getTokenOp(const Token& token){
+    if(token.type == ";") return OP_SEMI;
+    if(token.type == "=") return OP_ASSIGN;
+    if(token.type == "+") return OP_ADD;
+    if(token.type == "-") return OP_SUB;
+    if(token.type == "(") return OP_LPAREN;
+    if(token.type == ")") return OP_RPAREN;
+    if(token.type == "*") return OP_MUL;
+    if(token.type == "/") return OP_DIV;
+    if(token.type == "IF") return OP_IF;
+    if(token.type == "THEN") return OP_THEN;
+    if(token.type == "WHILE") return OP_WHILE;
+    if(token.type == "DO") return OP_DO;
+    if(token.type == "ODD") return OP_ODD;
+    if(token.type == "==") return OP_EQ;
+    if(token.type == "!=") return OP_NE;
+    if(token.type == ">") return OP_GT;
+    if(token.type == "<") return OP_LT;
+    if(token.type == ">=") return OP_GTE;
+    if(token.type == "<=") return OP_LTE;
+    if(token.type == "{") return OP_LBRACE;
+    if(token.type == "}") return OP_RBRACE;
+    if(token.type == "CALL") return OP_CALL;
+    return NON_OP;
+}
+
+void Parser::parse(const Token* tokens, int tokenCount) {
+    Token currentToken;
+    ParserOps currentOp;
+    Token topToken;
+    ParserOps topOp;
+    bool shouldReduce;
+    char relation;
+    // Initilaize the parser 
+    parseStack[pStackSize++] = Token(";", "DELIMITER");
+
+    for (int i = 0; i < tokenCount; i++){
+        currentToken = tokens[i];
+        currentOp = getTokenOp(currentToken);
+        // if non-terminal shift directly onto stack
+        if (currentOp == NON_OP) {
+            parseStack[pStackSize++] = currentToken;
+            continue;
+        }
+
+        shouldReduce = false;
+        for(int j = pStackSize - 1; j >= 0; j--){
+            topToken = parseStack[j];
+            topOp = getTokenOp(topToken);
+            if (topOp == NON_OP) continue;
+            relation = getRelation(topOp, currentOp);
+            if (relation == '>') {
+                shouldReduce = true;
+                break;
+            }
+        }
+        // if relation == '?'  --> handle error messages?
+        if(shouldReduce) {
+            cout << "Perform reduction";
+            // performReduction();
+        } else {
+            // < or = relation shift onto stack
+            if (pStackSize < MAX_TOKENS) {
+                parseStack[pStackSize++] = currentToken;
+            } else {
+                cerr << "Exceeded maximum stack size." << endl;
+                break;
+            }
+        }    
+    }
+    // Do remaining reductions after processing all tokens  
+    while(pStackSize > 1) {
+        cout << "Perform reduction";
+        //performReduction();
+    }
+    pStackSize = 0;
 }
