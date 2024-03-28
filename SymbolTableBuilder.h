@@ -4,7 +4,6 @@
 #include "enumDefinitions.h"
 #include "Tokenizer.h"
 #include <iostream>
-#include <vector>
 #include <string>
 
 using namespace std;

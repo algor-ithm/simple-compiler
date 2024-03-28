@@ -145,8 +145,7 @@ TokenState Tokenizer::getNextTokenState(TokenState currentState, InputType input
     if (currentState < 0 || currentState >= S_COUNT || input < 0 || input >= I_COUNT) {
         throw out_of_range("Current state or input is out of range.");
     }
-    int nextState = tokenStateTable[currentState][input];
-    return static_cast<TokenState>(nextState);
+    return static_cast<TokenState>(tokenStateTable[currentState][input]);
 }
 
 // Set the input string for the lexer

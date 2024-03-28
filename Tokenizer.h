@@ -3,13 +3,12 @@
 
 #include "enumDefinitions.h"
 #include <iostream>
-#include <vector>
 #include <string>
 #include <cctype>
 
 // Define the token Struct
 const int MAX_TOKENS = 1000;
-struct Token {
+struct Token{
     string lexeme;
     string type;
 
@@ -21,7 +20,7 @@ struct Token {
         : lexeme(lex), type(lexType) {}
 };
 
-class Tokenizer {
+class Tokenizer{
 private:
     int tokenStateTable[S_COUNT][I_COUNT] = {};
     Token tokens[MAX_TOKENS];
