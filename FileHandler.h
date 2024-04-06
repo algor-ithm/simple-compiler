@@ -3,6 +3,7 @@
 
 #include "Tokenizer.h"
 #include "SymbolTableBuilder.h"
+#include "Parser.h"
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -22,6 +23,7 @@ public:
     // write symbol table file
     void writeSymbolTable(const SymbolTableEntry* symbolList, int symbolCount);
     // write quads?
+    void writeQuads(const Quad* quadList, int quadCount);
 };
 
 #endif

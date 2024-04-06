@@ -48,3 +48,16 @@ void FileHandler::writeSymbolTable(const SymbolTableEntry* symbolList, int symbo
 }
 
 //write quads?
+void FileHandler::writeQuads(const Quad* quadList, int quadCount) {
+    const string filename = "textFiles/quads.txt";
+
+    ofstream quadFile(filename);
+    if(!quadFile.is_open()) {
+        throw runtime_error("Could not open file: " + filename);
+    }
+    for (int i = 0; i < quadCount; i++) {
+        quadFile << quadList[i].op << ", " << quadList[i].arg1 << ", " << quadList[i].arg2 
+            << ", " << quadList[i].result << endl;
+    }
+    quadFile.close();
+}

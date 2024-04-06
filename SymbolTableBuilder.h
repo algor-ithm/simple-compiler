@@ -29,6 +29,7 @@ private:
     int symbolStateTable[SS_COUNT][TT_COUNT];
     SymbolTableEntry symbolList[MAX_SYMBOLS];
     int symbolCount = 0;
+    int tempCount = 5;
     void configSymbolTableFSA();
     SymbolState getNextSymbolState(SymbolState currState, TokenType token);
     TokenType mapStringTypeToTokenType(const string& tokenType);

@@ -44,6 +44,7 @@ void SymbolTableBuilder::configSymbolTableFSA() {
     symbolStateTable[PROC_DEC][IDENTIFIER] = PROC_NAME;
     // Procedure name state
     symbolStateTable[PROC_NAME][L_PAREN] = PGM_START;
+    symbolStateTable[PROC_NAME][L_BRACE] = PGM_START;
     // Program body state
     for (int i = 0; i < TT_COUNT; i++) {
         symbolStateTable[PGM_BODY][i] = PGM_BODY;
@@ -86,7 +87,7 @@ TokenType SymbolTableBuilder::mapStringTypeToTokenType(const string& tokenType){
     if(tokenType == "COMMA") return COMMA_T;
     if(tokenType == "LEFT_BRACE") return L_BRACE;
     if(tokenType == "LEFT_PAREN") return L_PAREN;
-    if(tokenType == "EOF") return END_FILE;
+    if(tokenType == "EndFile") return END_FILE;
     return OTHER_T;
 }
 
@@ -95,7 +96,7 @@ void SymbolTableBuilder::addToSymbolTable(const string& token, const string& typ
     if (symbolCount < MAX_SYMBOLS){
         symbolList[symbolCount++] = SymbolTableEntry(token, type, value, to_string(addr), segment);
     } else {
-
+        cerr << "No more symbol space." << endl;
     }
     //symbolList.emplace_back(SymbolTableEntry(token, type, value, to_string(addr), segment));
 }
@@ -177,11 +178,13 @@ void SymbolTableBuilder::buildSymbolTable(const Token* tokens, int tokenCount){
                 break;
             case END_STATE:
                 // add temp varaibles (3 to start can add more)
-                addToSymbolTable("temp1", "INTVAR", "?", dataAddress, "data");
+                addToSymbolTable("T1", "INTVAR", "?", dataAddress, "data");
                 dataAddress += 2;
-                addToSymbolTable("temp2", "INTVAR", "?", dataAddress, "data");
+                addToSymbolTable("T2", "INTVAR", "?", dataAddress, "data");
                 dataAddress += 2;
-                addToSymbolTable("temp3", "INTVAR", "?", dataAddress, "data");
+                addToSymbolTable("T3", "INTVAR", "?", dataAddress, "data");
+                dataAddress += 2;
+                addToSymbolTable("T4", "INTVAR", "?", dataAddress, "data");
                 dataAddress += 2;
                 return;
         }

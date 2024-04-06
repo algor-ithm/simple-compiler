@@ -341,9 +341,9 @@ void Tokenizer::tokenize() {
     }
     // Handle any left over characters in lexeme
     if (!currentLexeme.empty()) {
-        //cout << "Current State: " << currentState << ", Lexeme: " << currentLexeme;
+        cout << "Current State: " << currentState << ", Lexeme: " << currentLexeme;
         addTokens(currentLexeme, mapStateToTokenType(currentState, currentLexeme));
     }
     // add EOF character?
-    addTokens("EOF", "EOF");
+    addTokens("EndFile", "EndFile");
 }

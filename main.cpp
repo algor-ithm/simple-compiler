@@ -1,6 +1,7 @@
 #include "Tokenizer.h"
 #include "FileHandler.h"
 #include "SymbolTableBuilder.h"
+#include "Parser.h"
 #include <iostream>
 
 using namespace std;
@@ -13,6 +14,7 @@ int main(int argc, char* argv[]) {
     FileHandler fHandler;
     Tokenizer tokenizer;
     SymbolTableBuilder stBuilder;
+    Parser parser;
 
     // check that a program file was a command line arguement
     if (argc < 2) {
@@ -42,6 +44,11 @@ int main(int argc, char* argv[]) {
     const SymbolTableEntry* symbolTable = stBuilder.getSymbolTable();
     int symbolCount = stBuilder.getSymbolCount();
     fHandler.writeSymbolTable(symbolTable, symbolCount);
-    // add more to do: syntax, semantics, etc.
+    parser.parse(tokenList, tokenCount);
+    const Quad* quadList = parser.getQuads();
+    int quadCount = parser.getQuadCount();
+    fHandler.writeQuads(quadList, quadCount);
+    // add more to do: code generation, etc.
+    
     return 0;
 }
