@@ -10,6 +10,10 @@
 # Ignore text files in specific directory
 textFiles/token-list.txt
 textFiles/symbol-table.txt
+textFiles/quads.txt
+
+# Ignore test files
+testFiles/
 
 # Ignore executables and build files
 myCompiler
