@@ -1,6 +1,9 @@
 CLASS Pgm3 {
     CONST M = 7, N = 85;
     VAR X, Y, Z;
+    GET Y;
+    GET Z;
     
     X = M + Y * Z + 12;
+    PUT X;
 }

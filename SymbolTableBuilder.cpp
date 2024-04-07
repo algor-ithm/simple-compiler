@@ -94,15 +94,15 @@ TokenType SymbolTableBuilder::mapStringTypeToTokenType(const string& tokenType){
 // Add symbol to symbol vecotr
 void SymbolTableBuilder::addToSymbolTable(const string& token, const string& type, const string& value, int addr, const string& segment) {
     if (symbolCount < MAX_SYMBOLS){
-        symbolList[symbolCount++] = SymbolTableEntry(token, type, value, to_string(addr), segment);
+        symbolList[symbolCount++] = Symbol(token, type, value, to_string(addr), segment);
     } else {
         cerr << "No more symbol space." << endl;
     }
-    //symbolList.emplace_back(SymbolTableEntry(token, type, value, to_string(addr), segment));
+    //symbolList.emplace_back(Symbol(token, type, value, to_string(addr), segment));
 }
 
 // return symbol list
-const SymbolTableEntry* SymbolTableBuilder::getSymbolTable() const {
+const Symbol* SymbolTableBuilder::getSymbolTable() const {
     return symbolList;
 }
 
@@ -177,7 +177,7 @@ void SymbolTableBuilder::buildSymbolTable(const Token* tokens, int tokenCount){
                 dataAddress += 2;
                 break;
             case END_STATE:
-                // add temp varaibles (3 to start can add more)
+                // add temp varaibles (4 to start can add more)
                 addToSymbolTable("T1", "INTVAR", "?", dataAddress, "data");
                 dataAddress += 2;
                 addToSymbolTable("T2", "INTVAR", "?", dataAddress, "data");

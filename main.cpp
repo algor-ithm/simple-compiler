@@ -2,15 +2,13 @@
 #include "FileHandler.h"
 #include "SymbolTableBuilder.h"
 #include "Parser.h"
+#include "CodeGenerator.h"
 #include <iostream>
 
 using namespace std;
 
-// add args to pass program to compiler and output file names?
 int main(int argc, char* argv[]) {
     string code;
-    //const SymbolTableEntry symbolTable
-    //vector<SymbolTableEntry> symbolTable;
     FileHandler fHandler;
     Tokenizer tokenizer;
     SymbolTableBuilder stBuilder;
@@ -26,7 +24,7 @@ int main(int argc, char* argv[]) {
     try {
         code = fHandler.readProgram(pgmFile);
     } catch (const std::exception& e) {
-        cerr << "Error reading file: " << e.what() << endl;
+        cerr << "Error reading file: " << e.what() << " " << pgmFile << endl;
         return 1;
     }
     // Set the program as input for the lexer
@@ -41,14 +39,16 @@ int main(int argc, char* argv[]) {
     // Build the symbol talbe
     stBuilder.buildSymbolTable(tokenList, tokenCount);
     // Write symbol table to a file
-    const SymbolTableEntry* symbolTable = stBuilder.getSymbolTable();
+    const Symbol* symbolTable = stBuilder.getSymbolTable();
     int symbolCount = stBuilder.getSymbolCount();
     fHandler.writeSymbolTable(symbolTable, symbolCount);
+    // parse the program
     parser.parse(tokenList, tokenCount);
     const Quad* quadList = parser.getQuads();
     int quadCount = parser.getQuadCount();
     fHandler.writeQuads(quadList, quadCount);
-    // add more to do: code generation, etc.
-    
+    // generate the assembly code 
+    CodeGenerator codeGen(quadList, quadCount, symbolTable, symbolCount);
+    codeGen.generateAssembly();
     return 0;
 }

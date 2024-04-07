@@ -73,7 +73,9 @@ const unordered_set<string> reservedWords = {
     "PROCEDURE",
     "CALL",
     "DO",
-    "ODD"
+    "ODD",
+    "GET",
+    "PUT"
 };
 
 // states for Symbol Table FSA

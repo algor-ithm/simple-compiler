@@ -21,7 +21,7 @@ public:
     // write token list to file
     void writeTokenList(const Token* tokens, int tokenCount);
     // write symbol table file
-    void writeSymbolTable(const SymbolTableEntry* symbolList, int symbolCount);
+    void writeSymbolTable(const Symbol* symbolList, int symbolCount);
     // write quads?
     void writeQuads(const Quad* quadList, int quadCount);
 };

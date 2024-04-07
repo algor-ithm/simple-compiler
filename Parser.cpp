@@ -242,7 +242,8 @@ string Parser::generateWhileLabel(){
 }
 
 bool Parser::isStructural(Token& token){
-     return (token.type == "CLASS" || token.type == "CONST" || token.type == "VAR" || token.type == "PROCEDURE");
+     return (token.type == "CLASS" || token.type == "CONST" || token.type == "VAR" 
+        || token.type == "PROCEDURE" || token.type == "GET" || token.type == "PUT");
 }
 
 ParserOps Parser::getTokenOpType(const Token& token){
@@ -412,7 +413,7 @@ void Parser::handleWhile() {
     quads[quadCount++] = quad;
     whileStack[wStackSize++] = whileLabel;
     for (int i = wStackSize - 1; i >= 0; i--){
-        cout << whileStack[i] << endl;
+        //cout << whileStack[i] << endl;
     }
 }
 
@@ -453,12 +454,13 @@ void Parser::popWhileDo() {
         }
 }
 
-const Quad* Parser::getQuads(){
-    return quads;
-}
-
-int Parser::getQuadCount() {
-    return quadCount;
+void Parser::handleIO(Token currentToken, Token nextToken) {
+    if (nextToken.type == "IDENTIFIER") {
+    Quad newQuad(currentToken.lexeme, nextToken.lexeme, "?", "?");
+    quads[quadCount++] = newQuad;
+    } else {
+        cout << "ERROR: Cannot perform IO for " << nextToken.lexeme << "of type " << nextToken.type << endl;
+    }
 }
 
 void Parser::printStack() {
@@ -475,8 +477,17 @@ void Parser::printQuads() {
     }
 }
 
+// public functions
+const Quad* Parser::getQuads(){
+    return quads;
+}
+
+int Parser::getQuadCount() {
+    return quadCount;
+}
+
 void Parser::parse(const Token* tokens, int tokenCount) {
-    Token currentToken;
+    Token currentToken, ioToken;
     ParserOps currentOp, topOp;
     char relation;
     bool reductionNeeded, pendingThen, pendingDo;
@@ -499,12 +510,33 @@ void Parser::parse(const Token* tokens, int tokenCount) {
         // check structural tokens
         if (isStructural(currentToken)){
             if(currentToken.type == "VAR" || currentToken.type == "CONST"){
+                cout << "Skipped: " << currentToken.lexeme << endl;
                 // Skip to end of decleration
-                while (i < tokenCount && tokens[i].lexeme != ";") i++;
+                while (i < tokenCount && tokens[i].lexeme != ";") {
+                    i++;
+                    cout << "Skipped: " << tokens[i].lexeme << endl;
+                }
             }
-            // add logic to skip over parameter names later while token[i] != { i++
-            if (currentToken.type == "CLASS") i++;
-            if (currentToken.type == "PROCEDURE") i += 3;
+            if (currentToken.type == "CLASS") {
+                cout << "Skipped: " << currentToken.lexeme << endl;
+                i++;
+                cout << "Skipped: " << tokens[i].lexeme << endl;
+            }
+            // later: add ability to handle procedure calls for A
+            if (currentToken.type == "PROCEDURE") {
+                i += 3;
+                //cout << "Skipped: " << tokens[i].lexeme << endl;
+                
+            } 
+            if (currentToken.type == "GET" || currentToken.type == "PUT") {
+                cout << "Skipped: " << currentToken.lexeme << endl;
+                i++; // Skip keyword
+                cout << "Skipped: " << tokens[i].lexeme << endl;
+                ioToken = tokens[i]; // get identifier 
+                handleIO(currentToken, ioToken);
+                i++; // Skip semi 
+                cout << "Skipped: " << tokens[i].lexeme << endl;
+            }
             continue;
         }
 
@@ -520,12 +552,10 @@ void Parser::parse(const Token* tokens, int tokenCount) {
         cout << "CurrentOp to compare " << currentToken.lexeme << endl;
         relation = getRelation(topOp, currentOp); 
         cout << "Relation: " << relation << endl;
-
         if (relation == '<' || relation == '=') {
             parseStack[pStackSize++] = currentToken;
             cout << "Shifted " << currentToken.lexeme << " onto the stack" << endl;
         }  else if (relation == '>'){
-            //printStack(); cout << endl;
             reductionNeeded = true;
         } else {
             // add error handling 
@@ -533,16 +563,20 @@ void Parser::parse(const Token* tokens, int tokenCount) {
         }
         
         // perform reductions until no more needed
-        while (reductionNeeded) {
+        int count = 0;
+        while (reductionNeeded && count < 5) {
+            printStack(); cout << endl;
             performReduction();
             reductionNeeded = false;
             topOp = getNextStackOp();
+            cout << "CurrentOp to compare " << currentToken.lexeme << endl;
             relation = getRelation(topOp, currentOp);
             if (relation == '>') {
                 reductionNeeded = true;
-            } else if (relation == '=') {
+            } else if (relation == '=' || relation == '<') {
                 parseStack[pStackSize++] = currentToken;
             }
+            count++;
         }
 
         if (currentToken.lexeme == ")") {

@@ -9,7 +9,7 @@
 using  namespace std;
 
 const int MAX_LABELS = 15;
-const int MAX_QUADS = 500;
+const int MAX_QUADS = 100;
 struct Quad {
     string op;
     string arg1;
@@ -42,8 +42,6 @@ private:
     string generateTemp();
     string generateLabel();
     string generateWhileLabel();
-    // handle / complete if
-    // handle / complete while
     bool isStructural(Token& token);
     void performReduction();
     bool tryReduceArithmetic();
@@ -57,6 +55,7 @@ private:
     void handleWhile();
     void handleDo();
     void popWhileDo();
+    void handleIO(Token currentToken, Token nextToken);
     void printStack();
     void printQuads();
  

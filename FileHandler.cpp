@@ -17,7 +17,7 @@ void FileHandler::writeTokenList(const Token* tokens, int tokenCount) {
 
     ofstream tokenFile(filename);
     if (!tokenFile.is_open()) {
-        throw runtime_error("Couldn't not open file: " + filename);
+        throw runtime_error("Couldn't open file: " + filename);
     }
     // Write header line (needed?)
     tokenFile << "Lexeme\tTokenType\n";
@@ -29,7 +29,7 @@ void FileHandler::writeTokenList(const Token* tokens, int tokenCount) {
     tokenFile.close();
 }
 
-void FileHandler::writeSymbolTable(const SymbolTableEntry* symbolList, int symbolCount){
+void FileHandler::writeSymbolTable(const Symbol* symbolList, int symbolCount){
     const string filename = "textFiles/symbol-table.txt";
 
     ofstream symbolFile(filename);
@@ -47,7 +47,7 @@ void FileHandler::writeSymbolTable(const SymbolTableEntry* symbolList, int symbo
     symbolFile.close();
 }
 
-//write quads?
+//write quads
 void FileHandler::writeQuads(const Quad* quadList, int quadCount) {
     const string filename = "textFiles/quads.txt";
 

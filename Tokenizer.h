@@ -7,7 +7,7 @@
 #include <cctype>
 
 // Define the token Struct
-const int MAX_TOKENS = 1000;
+const int MAX_TOKENS = 500;
 struct Token{
     string lexeme;
     string type;
