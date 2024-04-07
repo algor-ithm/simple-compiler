@@ -15,6 +15,9 @@ textFiles/quads.txt
 # Ignore test files
 testFiles/
 
+# Ignore assembly files
+*.asm
+
 # Ignore executables and build files
 myCompiler
 *.exe
