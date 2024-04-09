@@ -71,7 +71,7 @@ void CodeGenerator::processQuads(){
             asmCode << "\tcall\tPrintString\n";
             asmCode << "\tcall\tGetAnInteger\n";
             asmCode << "\tmov ax, [ReadInt]\n";
-            asmCode << "\t[" << quad.leftArg << "], ax";
+            asmCode << "\tmov [" << quad.leftArg << "], ax";
             asmCode << "\t\t\t; Read " << quad.leftArg << "\n\n";
         }
         if (quad.op == "PUT") {
