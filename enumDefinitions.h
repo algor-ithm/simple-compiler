@@ -75,7 +75,8 @@ const unordered_set<string> reservedWords = {
     "DO",
     "ODD",
     "GET",
-    "PUT"
+    "PUT",
+    "ELSE"
 };
 
 // states for Symbol Table FSA
@@ -139,7 +140,8 @@ enum ParserOps {
     OP_LBRACE,          // [{] left brace (19)
     OP_RBRACE,          // [}] right brace (20)
     OP_CALL,            // [call] reserved word (20)
-    OP_COMMA,           // [,] comma (21)            
+    OP_COMMA,
+    OP_ELSE,           // [,] comma (21)            
     OP_COUNT,           // Operator count 
     NON_OP              // Used the represent non terminals (not part of table)
 };

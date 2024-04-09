@@ -40,7 +40,7 @@ void Parser::configOpTable() {
     opPrecedence[OP_ADD][OP_GTE] = '>';
     opPrecedence[OP_ADD][OP_LTE] = '>';
     //opPrecedence[OP_ADD][OP_RBRACE] = '>';
-    opPrecedence[OP_ADD][OP_COMMA] = '>';
+    //opPrecedence[OP_ADD][OP_COMMA] = '>';
     // subtraction
     opPrecedence[OP_SUB][OP_SEMI] = '>';
     opPrecedence[OP_SUB][OP_ADD] = '>';
@@ -58,7 +58,7 @@ void Parser::configOpTable() {
     opPrecedence[OP_SUB][OP_GTE] = '>';
     opPrecedence[OP_SUB][OP_LTE] = '>';
     //opPrecedence[OP_SUB][OP_RBRACE] = '>';
-    opPrecedence[OP_SUB][OP_COMMA] = '>';
+    //opPrecedence[OP_SUB][OP_COMMA] = '>';
     // left parentheses
     opPrecedence[OP_LPAREN][OP_ADD] = '<';
     opPrecedence[OP_LPAREN][OP_SUB] = '<';
@@ -73,7 +73,7 @@ void Parser::configOpTable() {
     opPrecedence[OP_RPAREN][OP_RPAREN] = '>';
     opPrecedence[OP_RPAREN][OP_MUL] = '>';
     opPrecedence[OP_RPAREN][OP_DIV] = '>';
-    opPrecedence[OP_ASSIGN][OP_COMMA] = '>';
+    //opPrecedence[OP_ASSIGN][OP_COMMA] = '>';
     // multiplication
     opPrecedence[OP_MUL][OP_SEMI] = '>';
     opPrecedence[OP_MUL][OP_ADD] = '>';
@@ -91,7 +91,7 @@ void Parser::configOpTable() {
     opPrecedence[OP_MUL][OP_GTE] = '>';
     opPrecedence[OP_MUL][OP_LTE] = '>';
     //opPrecedence[OP_MUL][OP_RBRACE] = '>';
-    opPrecedence[OP_ASSIGN][OP_COMMA] = '>';
+    //opPrecedence[OP_ASSIGN][OP_COMMA] = '>';
     // divide
     opPrecedence[OP_DIV][OP_SEMI] = '>';
     opPrecedence[OP_DIV][OP_ADD] = '>';
@@ -109,7 +109,7 @@ void Parser::configOpTable() {
     opPrecedence[OP_DIV][OP_GTE] = '>';
     opPrecedence[OP_DIV][OP_LTE] = '>';
     //opPrecedence[OP_DIV][OP_RBRACE] = '>';
-    opPrecedence[OP_ASSIGN][OP_COMMA] = '>';
+    //opPrecedence[OP_ASSIGN][OP_COMMA] = '>';
     // if
     opPrecedence[OP_IF][OP_ADD] = '<';
     opPrecedence[OP_IF][OP_SUB] = '<';
@@ -130,6 +130,7 @@ void Parser::configOpTable() {
     opPrecedence[OP_THEN][OP_WHILE] = '<';
     opPrecedence[OP_THEN][OP_LBRACE] = '<';
     opPrecedence[OP_THEN][OP_CALL] = '<';
+    opPrecedence[OP_THEN][OP_ELSE] = '=';
     // while (not done)
     opPrecedence[OP_WHILE][OP_ADD] = '<';
     opPrecedence[OP_WHILE][OP_SUB] = '<';
@@ -213,6 +214,11 @@ void Parser::configOpTable() {
     opPrecedence[OP_LBRACE][OP_LBRACE] = '<';
     opPrecedence[OP_LBRACE][OP_RBRACE] = '=';
     opPrecedence[OP_LBRACE][OP_CALL] = '<';
+    // else
+    opPrecedence[OP_ELSE][OP_ASSIGN] = '<';
+    opPrecedence[OP_ELSE][OP_IF] = '<';
+    opPrecedence[OP_ELSE][OP_WHILE] = '<';
+    opPrecedence[OP_ELSE][OP_LBRACE] = '<';
 }
 
 ParserOps Parser::getNextStackOp() {
@@ -277,6 +283,7 @@ ParserOps Parser::getTokenOpType(const Token& token){
     if(token.lexeme == "}") return OP_RBRACE;
     if(token.lexeme == "CALL") return OP_CALL;
     if(token.lexeme == ",") return OP_COMMA;
+    if(token.lexeme == "ELSE") return OP_ELSE;
     return NON_OP;
 }
 
@@ -286,9 +293,6 @@ void Parser::performReduction() {
         cout << "Reducing arithmetic opeartion" << endl;
     } else if (tryReduceBooleanExp()){
         cout << "Reducing boolean operation" << endl;
-    
-    } else if (tryReduceOdd()) {
-        cout << "Reducing Odd" << endl;
     } else if (tryReduceAssignment()){
         cout << "Reducing assignment opeartion" << endl;
     }
@@ -404,6 +408,17 @@ void Parser::handleThen() {
     }
 }
 
+void Parser::handleElse() {
+    string elseLabel = generateLabel();
+    string thenLabel = fixUpStack[fStackSize - 1];
+    Quad elseQuad("ELSE", elseLabel, "JMP" , "?");
+    quads[quadCount++] = elseQuad;
+    elseStack[eStackSize++] = elseLabel;
+    Quad labelQuad(thenLabel, "JLABEL", "?", "?");
+    quads[quadCount++] = labelQuad;
+    fStackSize--;
+}
+
 void Parser::popIfThen() {
     string label;
     Token ifToken = parseStack[pStackSize - 2];
@@ -414,7 +429,22 @@ void Parser::popIfThen() {
         Quad quad(label, "JLABEL", "?", "?");
         quads[quadCount++] = quad;
     } else {
-         cout << "ERROR: Missing IF" << endl;
+         cout << "ERROR: Missing IF for THEN" << endl;
+    }
+}
+
+void Parser::popIfThenElse() {
+    string label;
+    Token thenToken = parseStack[pStackSize - 2];
+    Token ifToken = parseStack[pStackSize - 3];
+    if (ifToken.lexeme == "IF" && thenToken.lexeme == "THEN") {
+        pStackSize -= 3;
+        label = elseStack[eStackSize - 1];
+        eStackSize--;
+        Quad quad(label, "JLABEL", "?", "?");
+        quads[quadCount++] = quad;
+    } else {
+        cout << "ERROR: Missing matching IF THEN for ELSE" << endl;
     }
 }
 
@@ -612,11 +642,22 @@ void Parser::parse(const Token* tokens, int tokenCount) {
             handleThen();
         }
 
+        if (currentToken.lexeme == "ELSE") {
+            cout << "Handling ELSE" << endl;
+            handleElse();
+        }
+
         if ((currentToken.lexeme == "}" || currentToken.lexeme == ";") 
-            && parseStack[pStackSize - 1].lexeme == "THEN") {
+            && parseStack[pStackSize - 1].lexeme == "THEN" && tokens[i + 1].lexeme != "ELSE") {
             cout << "Popping IF THEN off stack." << endl;
             popIfThen();
-        }  
+        } 
+
+        if ((currentToken.lexeme == "}" || currentToken.lexeme == ";") 
+            && parseStack[pStackSize - 1].lexeme == "ELSE") {
+            cout << "Popping IF THEN ELSE off stack." << endl;
+            popIfThenElse();
+        }   
 
         if (currentToken.lexeme == "WHILE") {
             cout << "Handling WHILE" << endl;

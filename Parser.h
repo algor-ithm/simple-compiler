@@ -28,10 +28,12 @@ private:
     Token parseStack[MAX_TOKENS];
     string fixUpStack[MAX_LABELS];
     string whileStack[MAX_LABELS];
+    string elseStack[MAX_LABELS];
     Quad quads[MAX_QUADS];
     int pStackSize = 0;
     int fStackSize = 0;
     int wStackSize = 0;
+    int eStackSize = 0;
     int quadCount = 0;
     int labelCount = 1;
     int tempCount = 1;
@@ -52,7 +54,9 @@ private:
     void handleClosingParen();
     void handleIf();
     void handleThen();
+    void handleElse();
     void popIfThen();
+    void popIfThenElse();
     void handleWhile();
     void handleDo();
     void popWhileDo();

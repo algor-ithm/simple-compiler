@@ -87,6 +87,9 @@ void CodeGenerator::processQuads(){
         if (quad.op == "THEN") {
             asmCode << "\tJ" << quad.rightArg << " " << quad.leftArg << "\n\n";  
         }
+        if (quad.op == "ELSE") {
+            asmCode << "\tjmp " << quad.leftArg << "\n\n";
+        } 
         if (quad.op == "WHILE") {
             asmCode << quad.leftArg << ":\n";
         }
@@ -94,7 +97,7 @@ void CodeGenerator::processQuads(){
             asmCode << "\tJ" << quad.rightArg << " " << quad.leftArg << "\n\n";
         }
         if (quad.leftArg == "JLABEL") {
-            asmCode << quad.op << ":\tnop\n";
+            asmCode << quad.op << ":\tnop\n\n";
         }
         if (quad.leftArg == "WLABEL") {
             asmCode << "\tjmp" << " " << quad.op << "\n\n"; 
