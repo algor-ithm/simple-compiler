@@ -46,6 +46,7 @@ private:
     void performReduction();
     bool tryReduceArithmetic();
     bool tryReduceBooleanExp();
+    bool tryReduceOdd();
     bool tryReduceAssignment();
     void handleClosingBrace();
     void handleClosingParen();

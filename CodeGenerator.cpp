@@ -115,7 +115,7 @@ void CodeGenerator::genDataSection(){
     asmCode << "\tdisplayMsg\t\tdb\t'You entered: '\n";
     asmCode << "\tlenDisplayMsg\tequ\t$ - displayMsg\n\n";
     asmCode << "\tnewline\tdb\t0xA\n";
-    asmCode << "\tTen\tdb\t10\n\n";
+    asmCode << "\tTen\t\tDW\t10\n\n";
     asmCode << "\tResult\t\tdb\t'Ans = '\n";
     asmCode << "\tResultValue\tdb\t'aaaaa'\n";
     asmCode << "\t\t\t\tdb\t0xA\n"; 
@@ -185,13 +185,15 @@ void CodeGenerator::genGetInterger() {
     asmCode << "\tmov eax, 3\n";
     asmCode << "\tmov ebx, 2\n";
     asmCode << "\tmov ecx, num\n";
-    asmCode << "\tint 0x80\n";
+    asmCode << "\tmov edx, 6\n";
+    asmCode << "\tint 0x80\n\n";
     asmCode << "\tmov edx, eax\n";
     asmCode << "\tmov eax, 4\n";
     asmCode << "\tmov ebx, 1\n";
     asmCode << "\tmov ecx, num\n";
     asmCode << "\tint 80h\n\n";
     // ConvertStringToInteger
+    asmCode << "; ConvertStringToInteger PROC\n";
     asmCode << "ConvertStringToInteger:\n";
     asmCode << "\tmov ax, 0\n";
     asmCode << "\tmov [ReadInt], ax\n";
@@ -210,11 +212,12 @@ void CodeGenerator::genGetInterger() {
     asmCode << "\tcmp bl, 0xA\n";
     asmCode << "\tjne Next\n";
     asmCode << "\tret\n";
+    asmCode << "; ConvertStringToInteger ENDP\n";
     asmCode << "; GetAnInteger\tENDP\n\n";
 }
 
 void CodeGenerator::genConvertIntToString() {
-    asmCode << "; ConvertIntegerToString\tPROC\n";
+    asmCode << "; ConvertIntegerToString\tPROC\n\n";
     asmCode << "ConvertIntegerToString:\n";
     asmCode << "\tmov ebx, ResultValue + 4\n\n";
     asmCode << "ConvertLoop:\n";

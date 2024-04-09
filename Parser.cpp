@@ -237,6 +237,7 @@ char Parser::getRelation(ParserOps op1, ParserOps op2) {
 
 string Parser::generateTemp() {
     return "T" + to_string(tempCount++);
+    if (tempCount == 5) tempCount = 1; 
 }
 
 string Parser::generateLabel() {
@@ -285,46 +286,49 @@ void Parser::performReduction() {
         cout << "Reducing arithmetic opeartion" << endl;
     } else if (tryReduceBooleanExp()){
         cout << "Reducing boolean operation" << endl;
+    
+    } else if (tryReduceOdd()) {
+        cout << "Reducing Odd" << endl;
     } else if (tryReduceAssignment()){
         cout << "Reducing assignment opeartion" << endl;
     }
 }
 
 bool Parser::tryReduceArithmetic() {
-        Token rOperand = parseStack[pStackSize - 1];
-        Token op = parseStack[pStackSize - 2];
-        Token lOperand = parseStack[pStackSize - 3];
-       if ((lOperand.type == "IDENTIFIER" || lOperand.type == "NUMERIC_LITERAL") &&
-            (rOperand.type == "IDENTIFIER" || rOperand.type == "NUMERIC_LITERAL") &&
-            (op.lexeme == "+" || op.lexeme == "-" || op.lexeme == "*" || op.lexeme == "/")) {
-
-            string temp = generateTemp();
-            Quad quad(op.lexeme, lOperand.lexeme, rOperand.lexeme, temp);
-            quads[quadCount++] = quad;
-            cout << "Created quad: " << quad.op << "," << quad.leftArg << "," << quad.rightArg << "," << quad.result << endl;
-            Token reduced(temp, "IDENTIFIER");
-            pStackSize -= 3;
-            parseStack[pStackSize++] = reduced;
-            return true;
-        }  
+    Token rOperand = parseStack[pStackSize - 1];
+    Token op = parseStack[pStackSize - 2];
+    Token lOperand = parseStack[pStackSize - 3];
+    if ((lOperand.type == "IDENTIFIER" || lOperand.type == "NUMERIC_LITERAL") &&
+        (rOperand.type == "IDENTIFIER" || rOperand.type == "NUMERIC_LITERAL") &&
+        (op.lexeme == "+" || op.lexeme == "-" || op.lexeme == "*" || op.lexeme == "/")) {
+        string temp = generateTemp();
+        Quad quad(op.lexeme, lOperand.lexeme, rOperand.lexeme, temp);
+        quads[quadCount++] = quad;
+        cout << "Created quad: " << quad.op << "," << quad.leftArg << "," << quad.rightArg << "," << quad.result << endl;
+        Token reduced(temp, "IDENTIFIER");
+        pStackSize -= 3;
+        parseStack[pStackSize++] = reduced;
+        return true;
+    }  
     return false;
 }
 
 bool Parser::tryReduceBooleanExp() {
-        Token rOperand = parseStack[pStackSize - 1];
-        Token op = parseStack[pStackSize - 2];
-        Token lOperand = parseStack[pStackSize - 3];
-        if ((lOperand.type == "IDENTIFIER" || lOperand.type == "NUMERIC_LITERAL") &&
-            (rOperand.type == "IDENTIFIER" || rOperand.type == "NUMERIC_LITERAL") &&
-            (op.lexeme == "==" || op.lexeme == "!=" || op.lexeme == ">" || 
-            op.lexeme == "<" || op.lexeme == ">=" || op.lexeme == "<=")){
+    Token rOperand = parseStack[pStackSize - 1];
+    Token op = parseStack[pStackSize - 2];
+    Token lOperand = parseStack[pStackSize - 3];
+    if ((lOperand.type == "IDENTIFIER" || lOperand.type == "NUMERIC_LITERAL") &&
+        (rOperand.type == "IDENTIFIER" || rOperand.type == "NUMERIC_LITERAL") &&
+        (op.lexeme == "==" || op.lexeme == "!=" || op.lexeme == ">" || 
+        op.lexeme == "<" || op.lexeme == ">=" || op.lexeme == "<=")){
 
-                Quad quad(op.lexeme, lOperand.lexeme, rOperand.lexeme, "?");
-            quads[quadCount++] = quad;
-            cout << "Created quad: " << quad.op << "," << quad.leftArg << "," << quad.rightArg << "," << quad.result << endl;
-            pStackSize -= 3;
-            return true;
-        }
+            Quad quad(op.lexeme, lOperand.lexeme, rOperand.lexeme, "?");
+        
+        quads[quadCount++] = quad;
+        cout << "Created quad: " << quad.op << "," << quad.leftArg << "," << quad.rightArg << "," << quad.result << endl;
+        pStackSize -= 3;
+        return true;
+    } 
     return false;
 }
 
@@ -573,6 +577,7 @@ void Parser::parse(const Token* tokens, int tokenCount) {
         int count = 0;
         while (reductionNeeded && count < 5) {
             printStack(); cout << endl;
+            cout << "Reduction called:" << endl;
             performReduction();
             reductionNeeded = false;
             topOp = getNextStackOp();
