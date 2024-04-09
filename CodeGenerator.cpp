@@ -119,7 +119,7 @@ void CodeGenerator::genDataSection(){
     asmCode << "\tResult\t\tdb\t'Ans = '\n";
     asmCode << "\tResultValue\tdb\t'aaaaa'\n";
     asmCode << "\t\t\t\tdb\t0xA\n"; 
-    asmCode << "\tResultEnd\tequ\t$ - Results\n\n";
+    asmCode << "\tResultEnd\tequ\t$ - Result\n\n";
     asmCode << "\tnum\t\ttimes 6 db 'ABCDEF'\n";
     asmCode << "\tnumEnd\tequ\t$ - num\n\n";
     for (int i = 0; i < dataSize; i++) {
