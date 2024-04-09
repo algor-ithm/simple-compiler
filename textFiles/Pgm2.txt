@@ -5,7 +5,7 @@ CLASS LargestCommonDenominator{
     PROCEDURE Multiply(){
         VAR A, B;
 
-        A = X,;. B = Y, Z = 0;
+        A = X, B = Y, Z = 0;
         WHILE B > 0 DO {
             IF ODD B THEN Z = Z + A;
             A = 2 * A; B = B/2;

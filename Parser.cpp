@@ -18,10 +18,11 @@ void Parser::configOpTable() {
     opPrecedence[OP_ASSIGN][OP_SEMI] = '>';
     opPrecedence[OP_ASSIGN][OP_ADD] = '<';
     opPrecedence[OP_ASSIGN][OP_SUB] = '<';
-    opPrecedence[OP_ASSIGN][OP_LBRACE] = '<';
+    opPrecedence[OP_ASSIGN][OP_LPAREN] = '<';
     opPrecedence[OP_ASSIGN][OP_MUL] = '<';
     opPrecedence[OP_ASSIGN][OP_DIV] = '<';
-    opPrecedence[OP_ASSIGN][OP_RBRACE] = '>';
+    //opPrecedence[OP_ASSIGN][OP_RBRACE] = '>';
+    opPrecedence[OP_ASSIGN][OP_COMMA] = '>';
     // addition
     opPrecedence[OP_ADD][OP_SEMI] = '>';
     opPrecedence[OP_ADD][OP_ADD] = '>';
@@ -38,7 +39,8 @@ void Parser::configOpTable() {
     opPrecedence[OP_ADD][OP_LT] = '>';
     opPrecedence[OP_ADD][OP_GTE] = '>';
     opPrecedence[OP_ADD][OP_LTE] = '>';
-    opPrecedence[OP_ADD][OP_RBRACE] = '>';
+    //opPrecedence[OP_ADD][OP_RBRACE] = '>';
+    opPrecedence[OP_ADD][OP_COMMA] = '>';
     // subtraction
     opPrecedence[OP_SUB][OP_SEMI] = '>';
     opPrecedence[OP_SUB][OP_ADD] = '>';
@@ -55,7 +57,8 @@ void Parser::configOpTable() {
     opPrecedence[OP_SUB][OP_LT] = '>';
     opPrecedence[OP_SUB][OP_GTE] = '>';
     opPrecedence[OP_SUB][OP_LTE] = '>';
-    opPrecedence[OP_SUB][OP_RBRACE] = '>';
+    //opPrecedence[OP_SUB][OP_RBRACE] = '>';
+    opPrecedence[OP_SUB][OP_COMMA] = '>';
     // left parentheses
     opPrecedence[OP_LPAREN][OP_ADD] = '<';
     opPrecedence[OP_LPAREN][OP_SUB] = '<';
@@ -70,6 +73,7 @@ void Parser::configOpTable() {
     opPrecedence[OP_RPAREN][OP_RPAREN] = '>';
     opPrecedence[OP_RPAREN][OP_MUL] = '>';
     opPrecedence[OP_RPAREN][OP_DIV] = '>';
+    opPrecedence[OP_ASSIGN][OP_COMMA] = '>';
     // multiplication
     opPrecedence[OP_MUL][OP_SEMI] = '>';
     opPrecedence[OP_MUL][OP_ADD] = '>';
@@ -86,7 +90,8 @@ void Parser::configOpTable() {
     opPrecedence[OP_MUL][OP_LT] = '>';
     opPrecedence[OP_MUL][OP_GTE] = '>';
     opPrecedence[OP_MUL][OP_LTE] = '>';
-    opPrecedence[OP_MUL][OP_RBRACE] = '>';
+    //opPrecedence[OP_MUL][OP_RBRACE] = '>';
+    opPrecedence[OP_ASSIGN][OP_COMMA] = '>';
     // divide
     opPrecedence[OP_DIV][OP_SEMI] = '>';
     opPrecedence[OP_DIV][OP_ADD] = '>';
@@ -103,7 +108,8 @@ void Parser::configOpTable() {
     opPrecedence[OP_DIV][OP_LT] = '>';
     opPrecedence[OP_DIV][OP_GTE] = '>';
     opPrecedence[OP_DIV][OP_LTE] = '>';
-    opPrecedence[OP_DIV][OP_RBRACE] = '>';
+    //opPrecedence[OP_DIV][OP_RBRACE] = '>';
+    opPrecedence[OP_ASSIGN][OP_COMMA] = '>';
     // if
     opPrecedence[OP_IF][OP_ADD] = '<';
     opPrecedence[OP_IF][OP_SUB] = '<';
@@ -269,6 +275,7 @@ ParserOps Parser::getTokenOpType(const Token& token){
     if(token.lexeme == "{") return OP_LBRACE;
     if(token.lexeme == "}") return OP_RBRACE;
     if(token.lexeme == "CALL") return OP_CALL;
+    if(token.lexeme == ",") return OP_COMMA;
     return NON_OP;
 }
 
@@ -292,9 +299,9 @@ bool Parser::tryReduceArithmetic() {
             (op.lexeme == "+" || op.lexeme == "-" || op.lexeme == "*" || op.lexeme == "/")) {
 
             string temp = generateTemp();
-            Quad quad(op.lexeme, rOperand.lexeme, lOperand.lexeme, temp);
+            Quad quad(op.lexeme, lOperand.lexeme, rOperand.lexeme, temp);
             quads[quadCount++] = quad;
-            cout << "Created quad: " << quad.op << "," << quad.arg1 << "," << quad.arg2 << "," << quad.result << endl;
+            cout << "Created quad: " << quad.op << "," << quad.leftArg << "," << quad.rightArg << "," << quad.result << endl;
             Token reduced(temp, "IDENTIFIER");
             pStackSize -= 3;
             parseStack[pStackSize++] = reduced;
@@ -312,9 +319,9 @@ bool Parser::tryReduceBooleanExp() {
             (op.lexeme == "==" || op.lexeme == "!=" || op.lexeme == ">" || 
             op.lexeme == "<" || op.lexeme == ">=" || op.lexeme == "<=")){
 
-                Quad quad(op.lexeme, rOperand.lexeme, lOperand.lexeme, "?");
+                Quad quad(op.lexeme, lOperand.lexeme, rOperand.lexeme, "?");
             quads[quadCount++] = quad;
-            cout << "Created quad: " << quad.op << "," << quad.arg1 << "," << quad.arg2 << "," << quad.result << endl;
+            cout << "Created quad: " << quad.op << "," << quad.leftArg << "," << quad.rightArg << "," << quad.result << endl;
             pStackSize -= 3;
             return true;
         }
@@ -330,7 +337,7 @@ bool Parser::tryReduceAssignment() {
 
             Quad quad(op.lexeme, lOperand.lexeme, rOperand.lexeme, "?");
             quads[quadCount++] = quad;
-            cout << "Created quad: " << quad.op << "," << quad.arg1 << "," << quad.arg2 << "," << quad.result << endl;
+            cout << "Created quad: " << quad.op << "," << quad.leftArg << "," << quad.rightArg << "," << quad.result << endl;
             pStackSize -= 3; 
             return true;   
         }
@@ -400,7 +407,7 @@ void Parser::popIfThen() {
         pStackSize -= 2;
         label = fixUpStack[fStackSize - 1];
         fStackSize--;
-        Quad quad(label, "?", "?", "?");
+        Quad quad(label, "JLABEL", "?", "?");
         quads[quadCount++] = quad;
     } else {
          cout << "ERROR: Missing IF" << endl;
@@ -409,7 +416,7 @@ void Parser::popIfThen() {
 
 void Parser::handleWhile() {
     string whileLabel = generateWhileLabel();
-    Quad quad("WHILE", "W1", "?", "?");
+    Quad quad("WHILE", whileLabel, "?", "?");
     quads[quadCount++] = quad;
     whileStack[wStackSize++] = whileLabel;
     for (int i = wStackSize - 1; i >= 0; i--){
@@ -445,8 +452,8 @@ void Parser::popWhileDo() {
             label = fixUpStack[fStackSize - 1];
             wStackSize--;
             fStackSize--;
-            Quad whileQuad (whileLabel, "?", "?", "?");
-            Quad labelQuad (label, "?", "?", "?");
+            Quad whileQuad ( whileLabel, "WLABEL", "?", "?");
+            Quad labelQuad (label, "JLABEL", "?", "?");
             quads[quadCount++] = whileQuad;
             quads[quadCount++] = labelQuad;
         } else {
@@ -473,7 +480,7 @@ void Parser::printStack() {
 void Parser::printQuads() {
     cout << "\n";
     for(int i = 0; i < quadCount; i++){
-        cout << quads[i].op << ", " << quads[i].arg1 << ", " << quads[i].arg2 << ", " << quads[i].result << endl;
+        cout << quads[i].op << ", " << quads[i].leftArg << ", " << quads[i].rightArg << ", " << quads[i].result << endl;
     }
 }
 
@@ -490,7 +497,7 @@ void Parser::parse(const Token* tokens, int tokenCount) {
     Token currentToken, ioToken;
     ParserOps currentOp, topOp;
     char relation;
-    bool reductionNeeded, pendingThen, pendingDo;
+    bool reductionNeeded;
     
     // Initialize the parser 
     pStackSize = 0;
@@ -522,7 +529,7 @@ void Parser::parse(const Token* tokens, int tokenCount) {
                 i++;
                 cout << "Skipped: " << tokens[i].lexeme << endl;
             }
-            // later: add ability to handle procedure calls for A
+            // later: add ability to handle procedure calls for A option
             if (currentToken.type == "PROCEDURE") {
                 i += 3;
                 //cout << "Skipped: " << tokens[i].lexeme << endl;
@@ -586,13 +593,8 @@ void Parser::parse(const Token* tokens, int tokenCount) {
 
         if (currentToken.lexeme == "}") {
             cout << "Reducing braces" << endl;
+            cout << endl; printStack(); cout << endl;
             handleClosingBrace();
-            if (pStackSize >= 4 && parseStack[pStackSize - 1].lexeme == "THEN") {
-                pendingThen = true;
-            }
-             if (pStackSize >= 4 && parseStack[pStackSize - 1].lexeme == "DO") {
-                pendingDo = true;
-            }
         }
 
         if (currentToken.lexeme == "IF") {
@@ -605,10 +607,10 @@ void Parser::parse(const Token* tokens, int tokenCount) {
             handleThen();
         }
 
-        if (pendingThen) {
+        if ((currentToken.lexeme == "}" || currentToken.lexeme == ";") 
+            && parseStack[pStackSize - 1].lexeme == "THEN") {
             cout << "Popping IF THEN off stack." << endl;
             popIfThen();
-            pendingThen = false;
         }  
 
         if (currentToken.lexeme == "WHILE") {
@@ -621,9 +623,9 @@ void Parser::parse(const Token* tokens, int tokenCount) {
             handleDo();
         }
 
-        if (pendingDo) {
+        if ((currentToken.lexeme == "}" || currentToken.lexeme == ";") 
+            && parseStack[pStackSize - 1].lexeme == "DO") {
             cout << "Popping off WHILE DO" << endl;
-            pendingDo = false;
             popWhileDo();
             printStack();
         }

@@ -56,7 +56,7 @@ void FileHandler::writeQuads(const Quad* quadList, int quadCount) {
         throw runtime_error("Could not open file: " + filename);
     }
     for (int i = 0; i < quadCount; i++) {
-        quadFile << quadList[i].op << ", " << quadList[i].arg1 << ", " << quadList[i].arg2 
+        quadFile << quadList[i].op << ", " << quadList[i].leftArg << ", " << quadList[i].rightArg 
             << ", " << quadList[i].result << endl;
     }
     quadFile.close();

@@ -147,7 +147,7 @@ void SymbolTableBuilder::buildSymbolTable(const Token* tokens, int tokenCount){
             case CONST_ASSIGN:
                 break;
             case CONST_VAL:
-                currentValue = tokens[i].lexeme;
+                currentValue = tokens[i].lexeme.substr(3);
                 addToSymbolTable(currentToken, currentType, currentValue, dataAddress, "data");
                 dataAddress += 2;
                 break;
@@ -172,7 +172,7 @@ void SymbolTableBuilder::buildSymbolTable(const Token* tokens, int tokenCount){
             case NUM_LIT:
                 currentToken = tokens[i].lexeme;
                 currentType = tokens[i].type;
-                currentValue = tokens[i].lexeme;
+                currentValue = tokens[i].lexeme.substr(3);
                 addToSymbolTable(currentToken, currentType, currentValue, dataAddress, "data");
                 dataAddress += 2;
                 break;

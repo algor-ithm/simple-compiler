@@ -12,14 +12,14 @@ const int MAX_LABELS = 15;
 const int MAX_QUADS = 100;
 struct Quad {
     string op;
-    string arg1;
-    string arg2;
+    string leftArg;
+    string rightArg;
     string result;
 
-    Quad() : op(""), arg1(""), arg2(""), result("") {}
+    Quad() : op(""), leftArg(""), rightArg(""), result("") {}
 
     Quad(const string& o, const string& a1, const string& a2, const string& r)
-        : op(o), arg1(a1), arg2(a2), result(r) {}
+        : op(o), leftArg(a1), rightArg(a2), result(r) {}
 };
 class Parser {
 private:

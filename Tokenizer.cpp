@@ -307,7 +307,12 @@ void Tokenizer::tokenize() {
                 currentState = nextState;
                 position++;
                 break;
-            case DIGIT_FINAL: 
+            case DIGIT_FINAL:
+                currentLexeme = "Lit" + currentLexeme;
+                addTokens(currentLexeme, mapStateToTokenType(nextState, currentLexeme));
+                currentLexeme.clear();
+                currentState = START;
+                break;
             case IDENTIFIER_FINAL:
             case DIVISION:
             case ASSIGNMENT:

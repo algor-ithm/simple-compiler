@@ -30,7 +30,6 @@ private:
     void genTextSection();
     void genPrintString();
     void genGetInterger();
-    void genConvertStringToInt();
     void genConvertIntToString();
     void writeAsmFile();
   
