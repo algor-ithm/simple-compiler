@@ -18,6 +18,9 @@ testFiles/
 # Ignore assembly files
 *.asm
 
+# Debugging output
+output.txt
+
 # Ignore executables and build files
 myCompiler
 *.exe
