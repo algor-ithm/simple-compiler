@@ -16,6 +16,7 @@ textFiles/quads.txt
 testFiles/
 
 # Ignore assembly files
+assemblyFiles/*.asm
 *.asm
 
 # Debugging output
