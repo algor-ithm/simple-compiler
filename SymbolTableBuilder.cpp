@@ -92,9 +92,9 @@ TokenType SymbolTableBuilder::mapStringTypeToTokenType(const string& tokenType){
 }
 
 // Add symbol to symbol vecotr
-void SymbolTableBuilder::addToSymbolTable(const string& token, const string& type, const string& value, int addr, const string& segment) {
+void SymbolTableBuilder::addToSymbolTable(const string& token, const string& type, const string& value, const string& addr, const string& segment) {
     if (symbolCount < MAX_SYMBOLS){
-        symbolList[symbolCount++] = Symbol(token, type, value, to_string(addr), segment);
+        symbolList[symbolCount++] = Symbol(token, type, value, addr, segment);
     } else {
         cerr << "No more symbol space." << endl;
     }
@@ -133,7 +133,8 @@ void SymbolTableBuilder::buildSymbolTable(const Token* tokens, int tokenCount){
             case PGM_NAME:
                 currentToken = tokens[i].lexeme;
                 currentType = "PROGRAM_NAME";
-                addToSymbolTable(currentToken, currentType, "?", codeAddress, "code");
+                addToSymbolTable(currentToken, currentType, "?", to_string(codeAddress), "code");
+                addToSymbolTable("MAIN", "Label", "?", "?", "code");
                 codeAddress += 2;
                 break;
             case PGM_START:
@@ -148,7 +149,7 @@ void SymbolTableBuilder::buildSymbolTable(const Token* tokens, int tokenCount){
                 break;
             case CONST_VAL:
                 currentValue = tokens[i].lexeme.substr(3);
-                addToSymbolTable(currentToken, currentType, currentValue, dataAddress, "data");
+                addToSymbolTable(currentToken, currentType, currentValue, to_string(dataAddress), "data");
                 dataAddress += 2;
                 break;
             case VAR_DEC:
@@ -156,7 +157,7 @@ void SymbolTableBuilder::buildSymbolTable(const Token* tokens, int tokenCount){
             case VAR_NAME:
                 currentToken = tokens[i].lexeme;
                 currentType = tokens[i].type;
-                addToSymbolTable(currentToken, currentType, "?", dataAddress, "data");
+                addToSymbolTable(currentToken, currentType, "?", to_string(dataAddress), "data");
                 dataAddress += 2;
                 break;
             case PROC_DEC:
@@ -164,7 +165,7 @@ void SymbolTableBuilder::buildSymbolTable(const Token* tokens, int tokenCount){
             case PROC_NAME:
                 currentToken = tokens[i].lexeme;
                 currentType = "PROCEDURE";
-                addToSymbolTable(currentToken, currentType, "?", codeAddress, "code");
+                addToSymbolTable(currentToken, currentType, "?", to_string(codeAddress), "code");
                 codeAddress += 2;
                 break;
             case PGM_BODY:
@@ -173,18 +174,20 @@ void SymbolTableBuilder::buildSymbolTable(const Token* tokens, int tokenCount){
                 currentToken = tokens[i].lexeme;
                 currentType = tokens[i].type;
                 currentValue = tokens[i].lexeme.substr(3);
-                addToSymbolTable(currentToken, currentType, currentValue, dataAddress, "data");
+                addToSymbolTable(currentToken, currentType, currentValue, to_string(dataAddress), "data");
                 dataAddress += 2;
                 break;
             case END_STATE:
                 // add temp varaibles (4 to start can add more)
-                addToSymbolTable("T1", "INTVAR", "?", dataAddress, "data");
+                addToSymbolTable("T1", "INTVAR", "?", to_string(dataAddress), "data");
                 dataAddress += 2;
-                addToSymbolTable("T2", "INTVAR", "?", dataAddress, "data");
+                addToSymbolTable("T2", "INTVAR", "?", to_string(dataAddress), "data");
                 dataAddress += 2;
-                addToSymbolTable("T3", "INTVAR", "?", dataAddress, "data");
+                addToSymbolTable("T3", "INTVAR", "?", to_string(dataAddress), "data");
                 dataAddress += 2;
-                addToSymbolTable("T4", "INTVAR", "?", dataAddress, "data");
+                addToSymbolTable("T4", "INTVAR", "?", to_string(dataAddress), "data");
+                dataAddress += 2;
+                addToSymbolTable("T5", "INTVAR", "?", to_string(dataAddress), "data");
                 dataAddress += 2;
                 return;
         }

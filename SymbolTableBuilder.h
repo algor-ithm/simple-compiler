@@ -33,7 +33,7 @@ private:
     void configSymbolTableFSA();
     SymbolState getNextSymbolState(SymbolState currState, TokenType token);
     TokenType mapStringTypeToTokenType(const string& tokenType);
-    void addToSymbolTable(const string& token, const string& type, const string& value, int addr, const string& segment);
+    void addToSymbolTable(const string& token, const string& type, const string& value, const string& addr, const string& segment);
 
 public:
     SymbolTableBuilder();

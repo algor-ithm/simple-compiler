@@ -171,7 +171,6 @@ void Tokenizer::addTokens(const string& lexeme, const string& type) {
     } else {
         cerr << "Token array is full, cannot add more tokens." << endl;
     }
-    //tokens.emplace_back(Token(lexeme, type));
 }
 
 // Converts a character to its corresponding input
@@ -283,7 +282,7 @@ void Tokenizer::tokenize() {
                 position++;
                 break;
             case ERROR:
-                cout << "Invalid character read in: " << currentChar << endl;
+                cerr << "Invalid character read in: " << currentChar << endl;
                 position++;
                 break;
             case OPERATION:
@@ -340,13 +339,12 @@ void Tokenizer::tokenize() {
                 currentState = nextState;
                 break;
             default:
-                cout << "Invalid State" << endl;
+                cerr << "Invalid State" << endl;
                 break;
         }    
     }
     // Handle any left over characters in lexeme
     if (!currentLexeme.empty()) {
-        cout << "Current State: " << currentState << ", Lexeme: " << currentLexeme;
         addTokens(currentLexeme, mapStateToTokenType(currentState, currentLexeme));
     }
     // add EOF character?

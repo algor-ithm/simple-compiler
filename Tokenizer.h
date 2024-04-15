@@ -5,6 +5,7 @@
 #include <iostream>
 #include <string>
 #include <cctype>
+#include <cstring>
 
 // Define the token Struct
 const int MAX_TOKENS = 500;
