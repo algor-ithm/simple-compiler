@@ -64,19 +64,8 @@ enum InputType {
 
 // reserved words set to check if an identifier is actually a reserved word
 const unordered_set<string> reservedWords = {
-    "CLASS",
-    "VAR",
-    "CONST",
-    "IF",
-    "WHILE",
-    "THEN",
-    "PROCEDURE",
-    "CALL",
-    "DO",
-    "ODD",
-    "GET",
-    "PUT",
-    "ELSE"
+    "CLASS", "VAR", "CONST","IF", "WHILE", "THEN", "PROCEDURE",
+    "CALL", "DO", "ODD", "GET", "PUT", "ELSE", "RETURN", "MAIN"
 };
 
 // states for Symbol Table FSA
