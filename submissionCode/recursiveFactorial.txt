@@ -1,0 +1,19 @@
+CLASS recursiveFactorial {
+
+    PROCEDURE factorial() {
+        IF N <= 1 THEN
+            RETURN;
+
+        Nfact = Nfact * N;
+        N = N - 1;
+        CALL factorial();
+    }
+
+    MAIN {
+    VAR N, Nfact;
+    GET N;
+    Nfact = 1;
+    CALL factorial();
+    PUT Nfact; 
+    }
+}

@@ -1,0 +1,10 @@
+CLASS PrintLargestOfTwo {
+    VAR a, b;
+    GET a;
+    GET b;
+
+    IF a > b THEN
+        PUT a;
+    ELSE
+        PUT b;
+}

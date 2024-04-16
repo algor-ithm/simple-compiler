@@ -1,0 +1,13 @@
+CLASS BobJane {
+    CONST c = 3;
+    VAR a, b, Bob, Jane, ans;
+
+    GET b;
+    GET a;
+    GET Bob;
+    GET Jane;
+
+    ans = a * ((Bob + Jane - 10) / 2 * 4) / (b + c);
+
+    PUT ans;
+}
