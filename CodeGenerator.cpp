@@ -3,7 +3,7 @@
 CodeGenerator::CodeGenerator(const Quad* quadList, int quadSize, const Symbol* symbolTable, int symbolSize)
         : quads(quadList), qSize(quadSize), symbols(symbolTable), sSize(symbolSize) {}
 
-void CodeGenerator::processSymbolTable(){
+void CodeGenerator::processSymbolTable() {
     Symbol sym;
     bool found;
     for (int i = 0; i < sSize; i++) {
@@ -31,8 +31,18 @@ void CodeGenerator::processSymbolTable(){
     }
 }
 
-void CodeGenerator::processQuads(){
-    Quad quad; 
+void CodeGenerator::detectMain() {
+    mainFound = false;
+    for (int i = 0; i < qSize; i++) {
+        if (quads[i].op == "MAIN") {
+            mainFound = true;
+            return;
+        }
+    }
+}
+
+void CodeGenerator::processQuads() {
+    Quad quad;
     for (int i = 0; i < qSize; i++) {
         quad = quads[i];
         if (quad.op == "+") {
@@ -96,12 +106,32 @@ void CodeGenerator::processQuads(){
         if (quad.op == "DO") {
             asmCode << "\tJ" << quad.rightArg << " " << quad.leftArg << "\n\n";
         }
-        if (quad.leftArg == "JLABEL") {
-            asmCode << quad.op << ":\tnop\n\n";
+        if (quad.op == "JLABEL") {
+            asmCode << quad.leftArg << ":\tnop\n\n";
         }
-        if (quad.leftArg == "WLABEL") {
-            asmCode << "\tjmp" << " " << quad.op << "\n\n"; 
+        if (quad.op == "WLABEL") {
+            asmCode << "\tjmp" << " " << quad.leftArg << "\n\n"; 
         }
+        if (quad.op == "PROC") {
+            asmCode << "; " << quad.leftArg << "\tPROC\n";
+            asmCode << quad.leftArg << ":\n";
+        }
+        if (quad.op == "PROCEND") {
+            asmCode << "; " << quad.leftArg << "\tENDP\n\n";
+        }
+        if (quad.op == "RetHome") {
+            asmCode << "RetHome:\n";
+        }
+        if (quad.op == "CALL") {
+            asmCode << "\tcall " << quad.leftArg << "\n\n";
+        }
+        if (quad.op == "RETURN") {
+            asmCode << "\tret\n";
+        }
+        if (quad.op == "MAIN") {
+            asmCode << "_start: nop\n";
+        }
+
     }
 }
 
@@ -111,7 +141,7 @@ void CodeGenerator::genLinuxDefs() {
     asmCode << "stdin\t\tequ\t0\n" << "stdout\t\tequ\t1\n" << "stderr\t\tequ\t3\n\n";
 }
 
-void CodeGenerator::genDataSection(){
+void CodeGenerator::genDataSection() {
     asmCode << "section .data\n";
     asmCode << "\tuserMsg\t\t\tdb\t'Enter an integer(less than 32,765): '\n";
     asmCode << "\tlenUserMsg\t\tequ\t$ - userMsg\n";
@@ -149,21 +179,23 @@ void CodeGenerator::genBssSection() {
 }
 
 void CodeGenerator::genTextSection() {
+    detectMain();
     asmCode << "; Start of program\n";
     asmCode << "\tglobal _start\n";
     asmCode << "section .text\n\n";
-    asmCode << "_start: nop\n";
-    asmCode << "\n";
+    if (!mainFound) {
+        asmCode << "_start: nop\n";
+    }
     // Process quads and create assembly language
-    asmCode << "; =========Process Quads Put Assembly Here=========\n\n";
+    // asmCode << "; =========Process Quads Put Assembly Here=========\n\n";
     processQuads();
     // done with assembly
-    asmCode << "\n; exit code\n";
+    asmCode << "; exit code\n";
     asmCode << "fini:\n";
     asmCode << "\tmov eax, sys_exit\n";
     asmCode << "\txor ebx, ebx\n";
     asmCode << "\tint 80h\n\n";
-    asmCode << "; End " << programName << ".asm\n\n\n";
+    asmCode << "; End " << programName << " program\n\n\n";
 }
 
 void CodeGenerator::genPrintString() {
@@ -196,7 +228,6 @@ void CodeGenerator::genGetInterger() {
     asmCode << "\tmov ecx, num\n";
     asmCode << "\tint 80h\n\n";
     // ConvertStringToInteger
-    asmCode << "; ConvertStringToInteger PROC\n";
     asmCode << "ConvertStringToInteger:\n";
     asmCode << "\tmov ax, 0\n";
     asmCode << "\tmov [ReadInt], ax\n";
@@ -215,7 +246,6 @@ void CodeGenerator::genGetInterger() {
     asmCode << "\tcmp bl, 0xA\n";
     asmCode << "\tjne Next\n";
     asmCode << "\tret\n";
-    asmCode << "; ConvertStringToInteger ENDP\n";
     asmCode << "; GetAnInteger\tENDP\n\n";
 }
 

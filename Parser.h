@@ -10,7 +10,7 @@ using  namespace std;
 
 const int MAX_LABELS = 15;
 const int MAX_QUADS = 100;
-struct Quad {
+struct Quad { 
     string op;
     string leftArg;
     string rightArg;
@@ -38,17 +38,18 @@ private:
     int labelCount = 1;
     int tempCount = 1;
     int whileCount = 1;
+    bool isRecursive;
     ParserOps getNextStackOp();
     char getRelation(ParserOps op1, ParserOps op2);
     ParserOps getTokenOpType(const Token& token);
     string generateTemp();
     string generateLabel();
     string generateWhileLabel();
-    bool isStructural(Token& token);
+    string generateRecursiveLabel();
     void performReduction();
     bool tryReduceArithmetic();
     bool tryReduceBooleanExp();
-    bool tryReduceOdd();
+    //bool tryReduceOdd();
     bool tryReduceAssignment();
     void handleClosingBrace();
     void handleClosingParen();
@@ -61,6 +62,12 @@ private:
     void handleDo();
     void popWhileDo();
     void handleIO(Token currentToken, Token nextToken);
+    void handleProcedureStart(string procName);
+    void handleProcedureEnd(string procName);
+    void handleCall(string procName);
+    void handleReturn();
+    void handleRecursion();
+    void handleMain();
     void printStack();
     void printQuads();
  

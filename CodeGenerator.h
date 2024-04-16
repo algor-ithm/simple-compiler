@@ -22,7 +22,9 @@ private:
     Symbol bssSymbols[MAX_SYMBOLS];
     int dataSize = 0;
     int bssSize = 0;
+    bool mainFound;
     void processSymbolTable();
+    void detectMain();
     void processQuads();
     void genLinuxDefs();
     void genDataSection();
