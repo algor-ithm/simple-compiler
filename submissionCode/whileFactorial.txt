@@ -1,0 +1,13 @@
+CLASS recursiveFactorial {
+
+    VAR N, Nfact;
+    GET N;
+    Nfact = 1;
+
+    WHILE N > 1 DO {
+        Nfact = Nfact * N;
+        N = N - 1;
+    }
+
+    PUT Nfact; 
+}
