@@ -26,10 +26,11 @@ class SymbolTableBuilder {
 private:
     // Use -1 to denote invalid state transitions (error handling later?)
     const int INVALID_STATE = -1;
+    const int tempCount = 10;
     int symbolStateTable[SS_COUNT][TT_COUNT];
     Symbol symbolList[MAX_SYMBOLS];
     int symbolCount = 0;
-    int tempCount = 5;
+    
     void configSymbolTableFSA();
     SymbolState getNextSymbolState(SymbolState currState, TokenType token);
     TokenType mapStringTypeToTokenType(const string& tokenType);

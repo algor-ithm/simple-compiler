@@ -113,7 +113,7 @@ int SymbolTableBuilder::getSymbolCount() const {
 // build the symbol table with symbol table FSA
 void SymbolTableBuilder::buildSymbolTable(const Token* tokens, int tokenCount){
     SymbolState currentState = START_S;
-    string currentToken, currentType, currentValue;
+    string currentToken, currentType, currentValue, temp;
     int codeAddress = 0;
     int dataAddress = 0;
 
@@ -179,16 +179,11 @@ void SymbolTableBuilder::buildSymbolTable(const Token* tokens, int tokenCount){
                 break;
             case END_STATE:
                 // add temp varaibles (4 to start can add more)
-                addToSymbolTable("T1", "INTVAR", "?", to_string(dataAddress), "data");
-                dataAddress += 2;
-                addToSymbolTable("T2", "INTVAR", "?", to_string(dataAddress), "data");
-                dataAddress += 2;
-                addToSymbolTable("T3", "INTVAR", "?", to_string(dataAddress), "data");
-                dataAddress += 2;
-                addToSymbolTable("T4", "INTVAR", "?", to_string(dataAddress), "data");
-                dataAddress += 2;
-                addToSymbolTable("T5", "INTVAR", "?", to_string(dataAddress), "data");
-                dataAddress += 2;
+                for (int i = 1; i <= tempCount; i++) {
+                    temp = "T" + to_string(i);
+                    addToSymbolTable(temp, "INTVAR", "?", to_string(dataAddress), "data");
+                    dataAddress += 2; 
+                }
                 return;
         }
         currentState = nextState;
