@@ -1,0 +1,16 @@
+CLASS totalHours {
+    CONST hoursPerDay = 24;
+    VAR days, day, hour, totalHours;
+
+    GET days;
+    day = 1, totalHours = 0;
+
+    WHILE day <= days DO {
+        hour = 1;
+        WHILE hour <= hoursPerDay DO {
+            totalHours = totalHours + 1;
+            hour = hour + 1;
+        }
+        day = day + 1;
+    }
+}

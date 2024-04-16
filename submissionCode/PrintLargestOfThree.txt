@@ -1,0 +1,23 @@
+CLASS PrintLargestOfThree {
+    VAR a, b, c;
+    GET A; 
+    GET B;
+    GET C;
+
+    IF a > b THEN {
+        IF a > c THEN {
+            PUT a;
+        } 
+        ELSE {
+            PUT c;
+        }
+    }
+    ELSE {
+        IF b > c THEN {
+            PUT b;
+        }
+        ELSE {
+            PUT c;
+        }
+    }
+}
