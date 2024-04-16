@@ -1,6 +1,6 @@
 #include "FileHandler.h"
 
-string FileHandler::readProgram(const string &filePath) const {
+string FileHandler::readProgram(const string& filePath) const {
     ifstream pgmFile(filePath);
     if (!pgmFile.is_open()) {
         throw runtime_error("Could not open file: " + this->filePath);
@@ -61,3 +61,13 @@ void FileHandler::writeQuads(const Quad* quadList, int quadCount) {
     }
     quadFile.close();
 }
+
+//write assembly code 
+ void FileHandler::writeAsmFile(const string& assemblyCode, const string& filename) {
+    ofstream asmFile(filename);
+    if(!asmFile.is_open()) {
+        throw runtime_error("Couldn't open file: " + filename);
+    }
+    asmFile << assemblyCode;
+    asmFile.close();
+ }

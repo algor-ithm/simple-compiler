@@ -22,8 +22,10 @@ public:
     void writeTokenList(const Token* tokens, int tokenCount);
     // write symbol table file
     void writeSymbolTable(const Symbol* symbolList, int symbolCount);
-    // write quads?
+    // write quads
     void writeQuads(const Quad* quadList, int quadCount);
+    // write assembly code
+    void writeAsmFile(const string& assemblyCode, const string& filename);
 };
 
 #endif

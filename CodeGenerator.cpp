@@ -266,14 +266,13 @@ void CodeGenerator::genConvertIntToString() {
     asmCode << "; ConvertIntegerToString\tENDP";
 }
 
-void CodeGenerator::writeAsmFile() {
+string CodeGenerator::getAssemblyCode() {
+    return asmCode.str();
+}
+
+string CodeGenerator::getFileName () {
     string filename = "assemblyFiles/" + programName + ".asm";
-    ofstream asmFile(filename);
-    if(!asmFile.is_open()) {
-        throw runtime_error("Couldn't open file: " + filename);
-    }
-    asmFile << asmCode.str();
-    asmFile.close();
+    return filename;
 }
 
 void CodeGenerator::generateAssembly() {
@@ -285,5 +284,4 @@ void CodeGenerator::generateAssembly() {
     genPrintString();
     genGetInterger();
     genConvertIntToString();
-    writeAsmFile();
 }

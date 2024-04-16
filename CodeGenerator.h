@@ -33,11 +33,12 @@ private:
     void genPrintString();
     void genGetInterger();
     void genConvertIntToString();
-    void writeAsmFile();
-  
+ 
 public:
     CodeGenerator(const Quad* quadList, int quadSize, const Symbol* symbolTable, int symbolSize); 
     void generateAssembly();
+    string getAssemblyCode();
+    string getFileName();
 };
 
 #endif
