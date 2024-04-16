@@ -1,4 +1,4 @@
-CLASS recursiveFactorial {
+CLASS procFactorial {
     
     PROCEDURE factorial() {
         WHILE N > 1 DO {
