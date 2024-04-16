@@ -128,11 +128,11 @@ enum ParserOps {
     OP_LTE,             // [<=] less than or equal relop (18)
     OP_LBRACE,          // [{] left brace (19)
     OP_RBRACE,          // [}] right brace (20)
-    OP_CALL,            // [call] reserved word (20)
-    OP_COMMA,
-    OP_ELSE,           // [,] comma (21)            
-    OP_COUNT,           // Operator count 
-    NON_OP              // Used the represent non terminals (not part of table)
+    OP_CALL,            // [call] reserved word (21)
+    OP_COMMA,           // [,] comma (22)
+    OP_ELSE,            // ELSE (23)       
+    OP_COUNT,           // Operator count (24 opeartors)
+    NON_OP              // Used the represent non terminals and everything else not part of table
 };
 
 #endif
