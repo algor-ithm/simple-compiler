@@ -48,6 +48,7 @@ int main(int argc, char* argv[]) {
     int quadCount = parser.getQuadCount();
     fHandler.writeQuads(quadList, quadCount);
     // generate the assembly code 
+    cout << "Making assembly" << endl;
     CodeGenerator codeGen(quadList, quadCount, symbolTable, symbolCount);
     codeGen.generateAssembly();
     return 0;
