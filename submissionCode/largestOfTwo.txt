@@ -1,4 +1,4 @@
-CLASS PrintLargestOfTwo {
+CLASS LargestOfTwo {
     VAR a, b;
     GET a;
     GET b;

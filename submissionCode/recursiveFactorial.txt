@@ -9,11 +9,9 @@ CLASS recursiveFactorial {
         CALL factorial();
     }
 
-    MAIN {
     VAR N, Nfact;
     GET N;
     Nfact = 1;
     CALL factorial();
     PUT Nfact; 
-    }
 }

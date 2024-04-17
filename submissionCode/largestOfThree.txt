@@ -1,4 +1,4 @@
-CLASS PrintLargestOfThree {
+CLASS LargestOfThree {
     VAR a, b, c;
     GET A; 
     GET B;
