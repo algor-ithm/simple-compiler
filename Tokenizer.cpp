@@ -282,7 +282,7 @@ void Tokenizer::tokenize() {
                 position++;
                 break;
             case ERROR:
-                cerr << "Invalid character read in: " << currentChar << endl;
+                throw runtime_error("Invalid character read in: " + currentChar);
                 position++;
                 break;
             case OPERATION:
