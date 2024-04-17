@@ -219,7 +219,6 @@ ParserOps Parser::getNextStackOp() {
         topOp = getTokenOpType(topToken);
         if (topOp != NON_OP) break;
     }
-    cout << "Top op to compare " << topToken.lexeme << endl;
     return topOp;
 }
 
@@ -232,7 +231,6 @@ char Parser::getRelation(ParserOps op1, ParserOps op2) {
 }
 
 string Parser::generateTemp() {
-    if (tempCount == 10) tempCount = 1;
     return "T" + to_string(tempCount++);
 }
 
@@ -273,13 +271,9 @@ ParserOps Parser::getTokenOpType(const Token& token){
 }
 
 void Parser::performReduction() {
-    cout << "Reduction function called" << endl;
-    if (tryReduceArithmetic()) {
-        cout << "Reducing arithmetic opeartion" << endl;
-    } else if (tryReduceBooleanExp()){
-        cout << "Reducing boolean operation" << endl;
-    } else if (tryReduceAssignment()){
-        cout << "Reducing assignment opeartion" << endl;
+    bool reduced = tryReduceArithmetic() || tryReduceBooleanExp() || tryReduceAssignment();
+    if (!reduced) {
+        throw runtime_error ("ERROR: Failed to apply operation reductions");
     }
 }
 
@@ -306,9 +300,9 @@ bool Parser::tryReduceBooleanExp() {
     Token op = parseStack[pStackSize - 2];
     Token lOperand = parseStack[pStackSize - 3];
     if ((lOperand.type == "IDENTIFIER" || lOperand.type == "NUMERIC_LITERAL") &&
-        (rOperand.type == "IDENTIFIER" || rOperand.type == "NUMERIC_LITERAL") &&
-        (op.lexeme == "==" || op.lexeme == "!=" || op.lexeme == ">" || 
-        op.lexeme == "<" || op.lexeme == ">=" || op.lexeme == "<=")){
+    (rOperand.type == "IDENTIFIER" || rOperand.type == "NUMERIC_LITERAL") &&
+    (op.lexeme == "==" || op.lexeme == "!=" || op.lexeme == ">" || 
+    op.lexeme == "<" || op.lexeme == ">=" || op.lexeme == "<=")){
             Quad quad(op.lexeme, lOperand.lexeme, rOperand.lexeme, "?");
         quads[quadCount++] = quad;
         pStackSize -= 3;
@@ -337,7 +331,7 @@ void Parser::handleClosingBrace() {
         if (leftBrace.lexeme == "{" && rightBrace.lexeme == "}") {
             pStackSize -= 2;
         } else {
-            cout << "ERROR: Missing a matching '{' for '}'" << endl;
+            throw runtime_error("ERROR: Missing a matching '{' for '}'");
         }
 }
 
@@ -359,7 +353,7 @@ void Parser::handleClosingParen(){
         pStackSize -= 3;
         parseStack[pStackSize++] = id;   
     } else {
-        cout << "ERROR: Missing a matching '(' and ')'" << endl;
+        throw runtime_error("ERROR: Missing a matching '(' and ')'");
     }
 }
 
@@ -404,7 +398,7 @@ void Parser::popIfThen() {
         Quad quad("JLABEL", label, "?", "?");
         quads[quadCount++] = quad;
     } else {
-         cerr << "ERROR: Missing IF for THEN" << endl;
+         throw runtime_error("ERROR: Missing IF for THEN");
     }
 }
 
@@ -419,7 +413,7 @@ void Parser::popIfThenElse() {
         Quad quad("JLABEL", label, "?", "?");
         quads[quadCount++] = quad;
     } else {
-        cerr << "ERROR: Missing matching IF THEN for ELSE" << endl;
+        throw runtime_error("ERROR: Missing matching IF THEN for ELSE");
     }
 }
 
@@ -459,7 +453,7 @@ void Parser::popWhileDo() {
             quads[quadCount++] = whileQuad;
             quads[quadCount++] = labelQuad;
         } else {
-            cerr << "ERROR: Missing WHILE" << endl;
+            throw runtime_error("ERROR: Missing WHILE");
         }
 }
 
@@ -468,7 +462,7 @@ void Parser::handleIO(Token currentToken, Token nextToken) {
     Quad newQuad(currentToken.lexeme, nextToken.lexeme, "?", "?");
     quads[quadCount++] = newQuad;
     } else {
-        cerr << "ERROR: Cannot perform IO for " << nextToken.lexeme << "of type " << nextToken.type << endl;
+        throw runtime_error("ERROR: Cannot perform IO for " + nextToken.lexeme + "of type " + nextToken.type);
     }
 }
 
@@ -688,17 +682,17 @@ void Parser::parse(const Token* tokens, int tokenCount) {
         if (currentToken.lexeme == "DO") handleDo();
 
         if ((currentToken.lexeme == "}" || currentToken.lexeme == ";") 
-            && parseStack[pStackSize - 1].lexeme == "THEN" && tokens[i + 1].lexeme != "ELSE") {
+        && parseStack[pStackSize - 1].lexeme == "THEN" && tokens[i + 1].lexeme != "ELSE") {
             popIfThen();
         } 
 
         if ((currentToken.lexeme == "}" || currentToken.lexeme == ";") 
-            && parseStack[pStackSize - 1].lexeme == "ELSE") {
+        && parseStack[pStackSize - 1].lexeme == "ELSE") {
             popIfThenElse();
         }   
 
         if ((currentToken.lexeme == "}" || currentToken.lexeme == ";") 
-            && parseStack[pStackSize - 1].lexeme == "DO") {
+        && parseStack[pStackSize - 1].lexeme == "DO") {
             popWhileDo();
         }
 
