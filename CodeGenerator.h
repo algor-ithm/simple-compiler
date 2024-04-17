@@ -19,10 +19,12 @@ private:
     stringstream asmCode;
     string programName;
     Symbol dataSymbols[MAX_SYMBOLS];
-    Symbol bssSymbols[MAX_SYMBOLS];
     int dataSize = 0;
+    Symbol bssSymbols[MAX_SYMBOLS];
     int bssSize = 0;
-    bool mainFound;
+    Quad optimizedQuads[MAX_QUADS];
+    int optimizedCount = 0; 
+    void optimizeQuads();
     void processSymbolTable();
     void processQuads();
     void genLinuxDefs();

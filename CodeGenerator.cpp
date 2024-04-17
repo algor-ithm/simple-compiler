@@ -3,6 +3,30 @@
 CodeGenerator::CodeGenerator(const Quad* quadList, int quadSize, const Symbol* symbolTable, int symbolSize)
         : quads(quadList), qSize(quadSize), symbols(symbolTable), sSize(symbolSize) {}
 
+// Optimize redudant load / store for arithmetic followed by assignment.
+void CodeGenerator::optimizeQuads() {
+    for (int i = 0; i < qSize - 1; i++) {
+        Quad current = quads[i];
+        Quad next = quads[i + 1];
+        if ((current.op == "+" || current.op == "-" || current.op == "*" || current.op == "/") 
+        && next.op == "=" && current.result == next.rightArg) {
+            Quad optimizedQuad(current.op, current.leftArg, current.rightArg, next.leftArg);
+            optimizedQuads[optimizedCount++] = optimizedQuad;
+            i++;
+        } else {
+           optimizedQuads[optimizedCount++] = current;
+        }
+    }
+    if (qSize % 2 != 0) {
+        optimizedQuads[optimizedCount++] = quads[qSize - 1];
+    }
+    // print the quads for debugging
+    cout << "\nThe Optimized Quads:\n" << endl;
+    for (int i = 0; i < optimizedCount; i++) {
+        cout << optimizedQuads[i].op << ", " << optimizedQuads[i].leftArg << ", " << optimizedQuads[i].rightArg << ", " << optimizedQuads[i].result << endl;
+    }
+}
+
 void CodeGenerator::processSymbolTable() {
     Symbol sym;
     bool found;
@@ -34,7 +58,7 @@ void CodeGenerator::processSymbolTable() {
 void CodeGenerator::processQuads() {
     Quad quad;
     for (int i = 0; i < qSize; i++) {
-        quad = quads[i];
+        quad = optimizedQuads[i];
         if (quad.op == "+") {
             asmCode << "\tmov ax, [" << quad.leftArg << "]\n";
             asmCode << "\tadd ax, [" << quad.rightArg << "]\n";
@@ -258,6 +282,7 @@ string CodeGenerator::getFileName () {
 }
 
 void CodeGenerator::generateAssembly() {
+    optimizeQuads();
     processSymbolTable();
     genLinuxDefs();
     genDataSection();
