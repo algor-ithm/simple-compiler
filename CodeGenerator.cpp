@@ -31,16 +31,6 @@ void CodeGenerator::processSymbolTable() {
     }
 }
 
-void CodeGenerator::detectMain() {
-    mainFound = false;
-    for (int i = 0; i < qSize; i++) {
-        if (quads[i].op == "MAIN") {
-            mainFound = true;
-            return;
-        }
-    }
-}
-
 void CodeGenerator::processQuads() {
     Quad quad;
     for (int i = 0; i < qSize; i++) {
@@ -156,11 +146,7 @@ void CodeGenerator::genDataSection() {
     asmCode << "\tnum\t\ttimes 6 db 'ABCDEF'\n";
     asmCode << "\tnumEnd\tequ\t$ - num\n\n";
     for (int i = 0; i < dataSize; i++) {
-        if (dataSymbols[i].type == "NUMERIC_LITERAL"){
-            asmCode << "\t" << dataSymbols[i].token << "\tDW\t" << dataSymbols[i].value << "\n";
-        } else {
-        asmCode << "\t" << dataSymbols[i].token << "\t\tDW\t" << dataSymbols[i].value << "\n";
-        }
+        asmCode << "\t" << dataSymbols[i].token << "\tDW\t" << dataSymbols[i].value << "\n";
     }
     asmCode << "\n";
 }
@@ -179,14 +165,10 @@ void CodeGenerator::genBssSection() {
 }
 
 void CodeGenerator::genTextSection() {
-    detectMain();
     asmCode << "; Start of program\n";
     asmCode << "\tglobal _start\n";
     asmCode << "section .text\n\n";
-    if (!mainFound) {
-        asmCode << "_start: nop\n";
-    }
-    // Process quads and create assembly language
+    // Process quads and create assembly code
     // asmCode << "; =========Process Quads Put Assembly Here=========\n\n";
     processQuads();
     // done with assembly

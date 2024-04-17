@@ -24,7 +24,6 @@ private:
     int bssSize = 0;
     bool mainFound;
     void processSymbolTable();
-    void detectMain();
     void processQuads();
     void genLinuxDefs();
     void genDataSection();

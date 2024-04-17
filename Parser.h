@@ -68,6 +68,7 @@ private:
     void handleReturn();
     void handleRecursion();
     void handleMain();
+    bool isExecutable(Token t);
     void printStack();
     void printQuads();
  

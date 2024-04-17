@@ -500,7 +500,6 @@ void Parser::handleReturn() {
 }
 
 void Parser::handleRecursion(){
-    cout << "Adjusting quads for recursion" << endl;
     if (!isRecursive) return;
     int i = 0;
     while (i < quadCount) {
@@ -529,6 +528,13 @@ void Parser::handleRecursion(){
 void Parser::handleMain() {
     Quad quad("MAIN", "?", "?", "?");
     quads[quadCount++] = quad;
+}
+
+bool Parser::isExecutable(Token t) { //, bool inDec) {
+    const unordered_set<string> executableTokens = {
+    "IF", "THEN", "ELSE", "WHILE", "DO", "CALL", "GET", "RETURN"
+   "IDENTIFIER", "NUMERIC_LITERAL", "ASSIGN", "ADDOP", "SUBOP", "MULOP", "DIVOP", "RELOP"};
+    return executableTokens.find(t.lexeme) != executableTokens.end();
 }
 
 void Parser::printStack() {
@@ -560,6 +566,8 @@ void Parser::parse(const Token* tokens, int tokenCount) {
     char relation;
     bool reductionNeeded;
     bool inProc = false;
+    bool inDeclaration = false;
+    bool mainDetected = false;
     string procName, callProc;
     int scopeDepth = 0;
     
@@ -585,6 +593,7 @@ void Parser::parse(const Token* tokens, int tokenCount) {
             continue;
         }
         if(currentToken.type == "VAR" || currentToken.type == "CONST"){
+
             while (i < tokenCount && tokens[i].lexeme != ";") {
                 i++;
             }
@@ -599,6 +608,10 @@ void Parser::parse(const Token* tokens, int tokenCount) {
             i += 2; 
             continue;
         } 
+        if (!inProc && !mainDetected && isExecutable(currentToken)) {
+            handleMain();
+            mainDetected = true;
+        }
         if (currentToken.type == "GET" || currentToken.type == "PUT") {
             ioToken = tokens[i + 1]; // get identifier 
             handleIO(currentToken, ioToken);
@@ -610,10 +623,8 @@ void Parser::parse(const Token* tokens, int tokenCount) {
             i++;
             callProc = tokens[i].lexeme;
             handleCall(callProc);
-            if (inProc && callProc == procName) {
-                cout << "Recursion detected in " << procName << endl;
+            if (inProc && callProc == procName) 
                 isRecursive = true;
-            }
             i += 3;
             continue;
         }
@@ -623,10 +634,6 @@ void Parser::parse(const Token* tokens, int tokenCount) {
             continue;
         }
 
-        if (currentToken.lexeme == "MAIN") {
-            handleMain();
-            continue;
-        }
         // check for non terminal shift onto stack
         if (currentOp == NON_OP) {
             parseStack[pStackSize++] = currentToken;
@@ -652,7 +659,6 @@ void Parser::parse(const Token* tokens, int tokenCount) {
         // perform reductions until no more needed
         while (reductionNeeded) {
             printStack(); cout << endl;
-            cout << "Reduction called:" << endl;
             performReduction();
             reductionNeeded = false;
             topOp = getNextStackOp();
@@ -666,67 +672,37 @@ void Parser::parse(const Token* tokens, int tokenCount) {
             }
         }
 
-        if (currentToken.lexeme == ")") {
-            cout << "Dealing with paren" << endl;
-            handleClosingParen();
-        }
+        if (currentToken.lexeme == ")") handleClosingParen();
 
         if (currentToken.lexeme == "{") scopeDepth++;
 
         if (currentToken.lexeme == "}") {
-            cout << "Reducing braces" << endl;
             handleClosingBrace();
-            scopeDepth--;
-            
+            scopeDepth--;  
         }
 
-        if (currentToken.lexeme == "IF") {
-            cout << "Handling IF" << endl;
-            handleIf();
-        }
-
-        if (currentToken.lexeme == "THEN") {
-            cout << "Handling THEN" << endl;
-            handleThen();
-        }
-
-        if (currentToken.lexeme == "ELSE") {
-            cout << "Handling ELSE" << endl;
-            handleElse();
-        }
+        if (currentToken.lexeme == "IF") handleIf();
+        if (currentToken.lexeme == "THEN") handleThen();
+        if (currentToken.lexeme == "ELSE") handleElse();
+        if (currentToken.lexeme == "WHILE") handleWhile();
+        if (currentToken.lexeme == "DO") handleDo();
 
         if ((currentToken.lexeme == "}" || currentToken.lexeme == ";") 
             && parseStack[pStackSize - 1].lexeme == "THEN" && tokens[i + 1].lexeme != "ELSE") {
-            cout << "Popping IF THEN off stack." << endl;
             popIfThen();
-            printStack();
         } 
 
         if ((currentToken.lexeme == "}" || currentToken.lexeme == ";") 
             && parseStack[pStackSize - 1].lexeme == "ELSE") {
-            cout << "Popping IF THEN ELSE off stack." << endl;
             popIfThenElse();
         }   
 
-        if (currentToken.lexeme == "WHILE") {
-            cout << "Handling WHILE" << endl;
-            handleWhile();
-        }
-
-        if (currentToken.lexeme == "DO") {
-            cout << "Handling DO" << endl;
-            handleDo();
-        }
-
         if ((currentToken.lexeme == "}" || currentToken.lexeme == ";") 
             && parseStack[pStackSize - 1].lexeme == "DO") {
-            cout << "Popping off WHILE DO" << endl;
             popWhileDo();
-            printStack();
         }
 
         if (inProc && scopeDepth == 1) {
-            cout << "Processing ending procedure" << endl;
             handleProcedureEnd(procName);
             inProc = false; procName = "";
         }
