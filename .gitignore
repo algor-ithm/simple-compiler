@@ -8,9 +8,7 @@
 #*.tsv
 
 # Ignore text files in specific directory
-textFiles/token-list.txt
-textFiles/symbol-table.txt
-textFiles/quads.txt
+textFiles/
 
 # Ignore test files
 testFiles/
