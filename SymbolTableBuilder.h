@@ -26,7 +26,7 @@ class SymbolTableBuilder {
 private:
     // Use -1 to denote invalid state transitions (error handling later?)
     const int INVALID_STATE = -1;
-    const int tempCount = 10;
+    const int tempCount = 7;
     int symbolStateTable[SS_COUNT][TT_COUNT];
     Symbol symbolList[MAX_SYMBOLS];
     int symbolCount = 0;
