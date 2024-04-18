@@ -480,8 +480,7 @@ void Parser::handleProcedureEnd(string procName) {
     Quad retQuad("RETURN", "?", "?" ,"?");
     quads[quadCount++] = retQuad;
     Quad procEndQuad ("PROCEND", procName, "?", "?");
-    quads[quadCount++] = procEndQuad;
-    
+    quads[quadCount++] = procEndQuad;  
 }
 
 void Parser::handleCall(string procName) {
@@ -520,8 +519,8 @@ void Parser::handleRecursion(){
     quads[quadCount++] = quad; 
 }
 
-void Parser::handleMain() {
-    Quad quad("MAIN", "?", "?", "?");
+void Parser::handleStart() {
+    Quad quad("START", "?", "?", "?");
     quads[quadCount++] = quad;
 }
 
@@ -602,11 +601,11 @@ void Parser::parse(const Token* tokens, int tokenCount) {
             continue;
         } 
         if (!inProc && !mainDetected && isExecutable(currentToken)) {
-            handleMain();
+            handleStart();
             mainDetected = true;
         }
         if (currentToken.type == "GET" || currentToken.type == "PUT") {
-            ioToken = tokens[++i]; // get identifier 
+            ioToken = tokens[++i];
             handleIO(currentToken, ioToken);
             continue;
         } 

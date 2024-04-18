@@ -67,7 +67,7 @@ private:
     void handleCall(string procName);
     void handleReturn();
     void handleRecursion();
-    void handleMain();
+    void handleStart();
     bool isExecutable(Token t);
     void printStack();
     void printQuads();

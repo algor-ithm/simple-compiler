@@ -145,7 +145,7 @@ void CodeGenerator::processQuads() {
         if (quad.op == "RETURN") {
             asmCode << "\tret\n";
         }
-        if (quad.op == "MAIN") {
+        if (quad.op == "START") {
             asmCode << "_start: nop\n";
         }
 
