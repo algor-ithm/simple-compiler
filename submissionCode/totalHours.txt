@@ -13,4 +13,6 @@ CLASS totalHours {
         }
         day = day + 1;
     }
+
+    PUT totalHours;
 }

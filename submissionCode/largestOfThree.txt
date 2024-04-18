@@ -1,8 +1,8 @@
-CLASS LargestOfThree {
+CLASS largestOfThree {
     VAR a, b, c;
-    GET A; 
-    GET B;
-    GET C;
+    GET a; 
+    GET b;
+    GET c;
 
     IF a > b THEN {
         IF a > c THEN {

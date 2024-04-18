@@ -606,7 +606,7 @@ void Parser::parse(const Token* tokens, int tokenCount) {
         } 
         if (currentToken.type == "CALL") {
             cout << "Handling Call" << endl;
-            callProc = tokens[i++].lexeme;
+            callProc = tokens[++i].lexeme;
             handleCall(callProc);
             if (inProc && callProc == procName) 
                 isRecursive = true;

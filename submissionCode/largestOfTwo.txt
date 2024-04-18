@@ -1,4 +1,4 @@
-CLASS LargestOfTwo {
+CLASS largestOfTwo {
     VAR a, b;
     GET a;
     GET b;
