@@ -1,0 +1,7 @@
+CLASS invalidIO {
+    VAR a, b;
+    GET 3;
+    GET a;
+
+    b = a / 3;
+}

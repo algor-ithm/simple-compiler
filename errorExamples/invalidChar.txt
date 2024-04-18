@@ -1,0 +1,9 @@
+CLASS invalidChar {
+    CONST a = 10;
+    VAR b;
+
+    IF a > b THEN
+        b = a + b:
+
+    PUT b;
+}

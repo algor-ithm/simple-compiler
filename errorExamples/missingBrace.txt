@@ -1,0 +1,8 @@
+CLASS missingBrace 
+    VAR a, b, c;
+    GET a;
+    GET b;
+    IF a > b THEN 
+        c = a * b;
+    PUT c;
+    }
