@@ -1,4 +1,4 @@
-CLASS LargestOfThree {
+CLASS largestOfThree {
     VAR a, b, c;
     GET A; 
     GET B;
