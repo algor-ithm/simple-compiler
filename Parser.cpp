@@ -274,7 +274,7 @@ ParserOps Parser::getTokenOpType(const Token& token){
 void Parser::performReduction() {
     bool reduced = tryReduceArithmetic() || tryReduceBooleanExp() || tryReduceAssignment();
     if (!reduced) {
-        throw runtime_error ("ERROR: Failed to apply operation reductions");
+        cerr << "ERROR: Failed to apply operation reductions" << endl;
     }
 }
 
@@ -332,7 +332,7 @@ void Parser::handleClosingBrace() {
         if (leftBrace.lexeme == "{" && rightBrace.lexeme == "}") {
             pStackSize -= 2;
         } else {
-            throw runtime_error("ERROR: Missing a matching '{' for '}'");
+            cerr << "ERROR: Missing a matching '{' for '}'" << endl;
         }
 }
 
@@ -354,7 +354,7 @@ void Parser::handleClosingParen(){
         pStackSize -= 3;
         parseStack[pStackSize++] = id;   
     } else {
-        throw runtime_error("ERROR: Missing a matching '(' and ')'");
+        cerr << "ERROR: Missing a matching '(' and ')'" << endl;
     }
 }
 
@@ -399,7 +399,7 @@ void Parser::popIfThen() {
         Quad quad("JLABEL", label, "?", "?");
         quads[quadCount++] = quad;
     } else {
-         throw runtime_error("ERROR: Missing IF for THEN");
+        cerr << "ERROR: Missing IF for THEN" << endl;
     }
 }
 
@@ -414,7 +414,7 @@ void Parser::popIfThenElse() {
         Quad quad("JLABEL", label, "?", "?");
         quads[quadCount++] = quad;
     } else {
-        throw runtime_error("ERROR: Missing matching IF THEN for ELSE");
+        cerr << "ERROR: Missing matching IF THEN for ELSE" << endl;
     }
 }
 
@@ -454,7 +454,7 @@ void Parser::popWhileDo() {
             quads[quadCount++] = whileQuad;
             quads[quadCount++] = labelQuad;
         } else {
-            throw runtime_error("ERROR: Missing WHILE");
+            cerr << "ERROR: Missing WHILE" << endl;
         }
 }
 
@@ -463,7 +463,7 @@ void Parser::handleIO(Token currentToken, Token nextToken) {
     Quad newQuad(currentToken.lexeme, nextToken.lexeme, "?", "?");
     quads[quadCount++] = newQuad;
     } else {
-        throw runtime_error("ERROR: Cannot perform IO for " + nextToken.lexeme + "of type " + nextToken.type);
+        cerr << "ERROR: Cannot perform IO for " + nextToken.lexeme + "of type " + nextToken.type << endl;
     }
 }
 
@@ -588,10 +588,8 @@ void Parser::parse(const Token* tokens, int tokenCount) {
             continue;
         }
         if(currentToken.type == "VAR" || currentToken.type == "CONST"){
-
-            while (i < tokenCount && tokens[i].lexeme != ";") {
+            while (i < tokenCount && tokens[i].lexeme != ";") 
                 i++;
-            }
             continue;
         }
         if (currentToken.type == "PROCEDURE") {
@@ -608,34 +606,29 @@ void Parser::parse(const Token* tokens, int tokenCount) {
             mainDetected = true;
         }
         if (currentToken.type == "GET" || currentToken.type == "PUT") {
-            ioToken = tokens[i + 1]; // get identifier 
+            ioToken = tokens[++i]; // get identifier 
             handleIO(currentToken, ioToken);
-            i += 2; // Skip semi 
             continue;
         } 
         if (currentToken.type == "CALL") {
             cout << "Handling Call" << endl;
-            i++;
-            callProc = tokens[i].lexeme;
+            callProc = tokens[i++].lexeme;
             handleCall(callProc);
             if (inProc && callProc == procName) 
                 isRecursive = true;
-            i += 3;
+            i += 2;
             continue;
         }
         if (currentToken.lexeme == "RETURN") {
-            cout << "Dealing with return" << endl;
             handleReturn();
             continue;
         }
-
         // check for non terminal shift onto stack
         if (currentOp == NON_OP) {
             parseStack[pStackSize++] = currentToken;
             cout << "Shifted " << currentToken.lexeme << " onto the stack (NON-OP)" << endl;
             continue;
         }
-        
         // determine relation and appropriate action
         topOp = getNextStackOp();
         cout << "CurrentOp to compare " << currentToken.lexeme << endl;
@@ -646,11 +639,7 @@ void Parser::parse(const Token* tokens, int tokenCount) {
             cout << "Shifted " << currentToken.lexeme << " onto the stack" << endl;
         }  else if (relation == '>'){
             reductionNeeded = true;
-        } else {
-            // add error handling 
-            cout << "ERROR: Invalid relation" << endl;
-        }
-        
+        } 
         // perform reductions until no more needed
         while (reductionNeeded) {
             printStack(); cout << endl;
@@ -666,37 +655,33 @@ void Parser::parse(const Token* tokens, int tokenCount) {
                 cout << "Shifted " << currentToken.lexeme << " onto the stack" << endl;
             }
         }
-
-        if (currentToken.lexeme == ")") handleClosingParen();
-
-        if (currentToken.lexeme == "{") scopeDepth++;
-
+        if (currentToken.lexeme == ")") 
+            handleClosingParen();
+        if (currentToken.lexeme == "{") 
+            scopeDepth++;
         if (currentToken.lexeme == "}") {
             handleClosingBrace();
             scopeDepth--;  
         }
-
-        if (currentToken.lexeme == "IF") handleIf();
-        if (currentToken.lexeme == "THEN") handleThen();
-        if (currentToken.lexeme == "ELSE") handleElse();
-        if (currentToken.lexeme == "WHILE") handleWhile();
-        if (currentToken.lexeme == "DO") handleDo();
-
+        if (currentToken.lexeme == "IF") 
+            handleIf();
+        if (currentToken.lexeme == "THEN") 
+            handleThen();
+        if (currentToken.lexeme == "ELSE") 
+            handleElse();
+        if (currentToken.lexeme == "WHILE") 
+            handleWhile();
+        if (currentToken.lexeme == "DO") 
+            handleDo();
         if ((currentToken.lexeme == "}" || currentToken.lexeme == ";") 
-        && parseStack[pStackSize - 1].lexeme == "THEN" && tokens[i + 1].lexeme != "ELSE") {
+        && parseStack[pStackSize - 1].lexeme == "THEN" && tokens[i + 1].lexeme != "ELSE") 
             popIfThen();
-        } 
-
         if ((currentToken.lexeme == "}" || currentToken.lexeme == ";") 
-        && parseStack[pStackSize - 1].lexeme == "ELSE") {
-            popIfThenElse();
-        }   
-
+        && parseStack[pStackSize - 1].lexeme == "ELSE") 
+            popIfThenElse();  
         if ((currentToken.lexeme == "}" || currentToken.lexeme == ";") 
-        && parseStack[pStackSize - 1].lexeme == "DO") {
+        && parseStack[pStackSize - 1].lexeme == "DO") 
             popWhileDo();
-        }
-
         if (inProc && scopeDepth == 1) {
             handleProcedureEnd(procName);
             inProc = false; procName = "";
