@@ -2,8 +2,8 @@ CLASS BobJane {
     CONST c = 3;
     VAR a, b, Bob, Jane, ans;
 
-    GET b;
     GET a;
+    GET b;
     GET Bob;
     GET Jane;
 
