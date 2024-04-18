@@ -5,21 +5,24 @@ CodeGenerator::CodeGenerator(const Quad* quadList, int quadSize, const Symbol* s
 
 // Optimize redudant load / store for arithmetic followed by assignment.
 void CodeGenerator::optimizeQuads() {
-    for (int i = 0; i < qSize - 1; i++) {
+    int i = 0;
+    while(i < qSize - 1) {
         Quad current = quads[i];
         Quad next = quads[i + 1];
         if ((current.op == "+" || current.op == "-" || current.op == "*" || current.op == "/") 
         && next.op == "=" && current.result == next.rightArg) {
             Quad optimizedQuad(current.op, current.leftArg, current.rightArg, next.leftArg);
             optimizedQuads[optimizedCount++] = optimizedQuad;
-            i++;
+            i += 2;
         } else {
            optimizedQuads[optimizedCount++] = current;
+           i++;
         }
-    }
-    if (qSize % 2 != 0) {
+        if (i == qSize - 1) {
         optimizedQuads[optimizedCount++] = quads[qSize - 1];
     }
+    }
+    
     // print the quads for debugging
     cout << "\nThe Optimized Quads:\n" << endl;
     for (int i = 0; i < optimizedCount; i++) {
