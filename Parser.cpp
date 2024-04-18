@@ -219,7 +219,6 @@ ParserOps Parser::getNextStackOp() {
         topOp = getTokenOpType(topToken);
         if (topOp != NON_OP) break;
     }
-    cout << "Top op to compare: " << topToken.lexeme << endl;
     return topOp;
 }
 
@@ -275,6 +274,7 @@ void Parser::performReduction() {
     bool reduced = tryReduceArithmetic() || tryReduceBooleanExp() || tryReduceAssignment();
     if (!reduced) {
         cerr << "ERROR: Failed to apply operation reductions" << endl;
+        exit(EXIT_FAILURE);
     }
 }
 
@@ -333,6 +333,7 @@ void Parser::handleClosingBrace() {
             pStackSize -= 2;
         } else {
             cerr << "ERROR: Missing a matching '{' for '}'" << endl;
+            exit(EXIT_FAILURE);
         }
 }
 
@@ -355,6 +356,7 @@ void Parser::handleClosingParen(){
         parseStack[pStackSize++] = id;   
     } else {
         cerr << "ERROR: Missing a matching '(' and ')'" << endl;
+        exit(EXIT_FAILURE);
     }
 }
 
@@ -400,6 +402,7 @@ void Parser::popIfThen() {
         quads[quadCount++] = quad;
     } else {
         cerr << "ERROR: Missing IF for THEN" << endl;
+        exit(EXIT_FAILURE);
     }
 }
 
@@ -415,6 +418,7 @@ void Parser::popIfThenElse() {
         quads[quadCount++] = quad;
     } else {
         cerr << "ERROR: Missing matching IF THEN for ELSE" << endl;
+        exit(EXIT_FAILURE);
     }
 }
 
@@ -455,6 +459,7 @@ void Parser::popWhileDo() {
             quads[quadCount++] = labelQuad;
         } else {
             cerr << "ERROR: Missing WHILE" << endl;
+            exit(EXIT_FAILURE);
         }
 }
 
@@ -463,7 +468,8 @@ void Parser::handleIO(Token currentToken, Token nextToken) {
     Quad newQuad(currentToken.lexeme, nextToken.lexeme, "?", "?");
     quads[quadCount++] = newQuad;
     } else {
-        cerr << "ERROR: Cannot perform IO for " + nextToken.lexeme + "of type " + nextToken.type << endl;
+        cerr << "ERROR: Cannot perform IO for " + nextToken.lexeme + " of type " + nextToken.type << endl;
+        exit(EXIT_FAILURE);
     }
 }
 
@@ -576,7 +582,6 @@ void Parser::parse(const Token* tokens, int tokenCount) {
 
         if (currentToken.lexeme == "EndFile") 
             return;
-
         // check structural tokens skip or handle
         if (currentToken.type == "CLASS") {
             i++;
@@ -589,7 +594,6 @@ void Parser::parse(const Token* tokens, int tokenCount) {
         }
         if (currentToken.type == "PROCEDURE") {
             procName = tokens[++i].lexeme;
-            cout << "Processing start procedure: " << procName << endl;
             handleProcedureStart(procName);
             inProc = true;
             i += 2; 
@@ -645,7 +649,7 @@ void Parser::parse(const Token* tokens, int tokenCount) {
             scopeDepth++;
         if (currentToken.lexeme == "}") {
             handleClosingBrace();
-            scopeDepth--;  
+            scopeDepth--; 
         }
         if (currentToken.lexeme == "IF") 
             handleIf();

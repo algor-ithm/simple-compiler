@@ -30,12 +30,14 @@ void Tokenizer::configJava0FSA() {
         tokenStateTable[DIGIT_S][i] = DIGIT_FINAL;
     }
     tokenStateTable[DIGIT_S][DIGIT] = DIGIT_S;
+    tokenStateTable[DIGIT_S][OTHER] = ERROR;
     // Identifier State
     for (int i = 0; i < I_COUNT; i++) {
         tokenStateTable[IDENTIFIER_S][i] = IDENTIFIER_FINAL;
     }
     tokenStateTable[IDENTIFIER_S][LETTER] = IDENTIFIER_S;
     tokenStateTable[IDENTIFIER_S][DIGIT] = IDENTIFIER_S;
+    tokenStateTable[IDENTIFIER_S][OTHER] = ERROR;
     // Slash State
     for (int i = 0; i < I_COUNT; i++) {
         tokenStateTable[SLASH_S][i] = DIVISION;
@@ -163,9 +165,9 @@ InputType Tokenizer::charToInputType(char ch) {
         case ')':
             return RIGHT_PAREN;
         default:
-            if (isalpha(ch)) return InputType::LETTER;
-            else if(isdigit(ch)) return InputType::DIGIT;
-            else return InputType::OTHER;
+            if (isalpha(ch)) return LETTER;
+            else if(isdigit(ch)) return DIGIT;
+            else return OTHER;
     }
 }
 
@@ -219,6 +221,7 @@ string Tokenizer::mapStateToTokenType(TokenState state, const string& lexeme) co
 void Tokenizer::tokenize() {
     string currentLexeme;
     TokenState currentState = TokenState::START;
+    string error;
 
     while (position < input.length()) {
         // Get the next char and determine its input type
@@ -234,9 +237,10 @@ void Tokenizer::tokenize() {
                 position++;
                 break;
             case ERROR:
-                cerr << "Invalid character read in: " + currentChar << endl;
-                position++;
-                break;
+                error = "ERROR: Invalid character read in: ";
+                error += currentChar;
+                cerr << error << endl;
+                exit(EXIT_FAILURE);
             case OPERATION:
             case DELIMITER:
             case BRACE:

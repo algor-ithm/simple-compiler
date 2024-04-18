@@ -91,7 +91,7 @@ void SymbolTableBuilder::addToSymbolTable(const string& token, const string& typ
     if (symbolCount < MAX_SYMBOLS)
         symbolList[symbolCount++] = Symbol(token, type, value, addr, segment);
     else 
-        cerr << "No more symbol space." << endl;
+        throw runtime_error("No more symbol space.");
 }
 
 // return symbol list
