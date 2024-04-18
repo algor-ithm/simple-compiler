@@ -23,6 +23,7 @@ struct Token{
 
 class Tokenizer{
 private:
+    // initializes everything to 0 (the START state)
     int tokenStateTable[S_COUNT][I_COUNT] = {};
     Token tokens[MAX_TOKENS];
     int tokenCount = 0;

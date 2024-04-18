@@ -25,39 +25,23 @@ void Tokenizer::configJava0FSA() {
     tokenStateTable[START][LEFT_PAREN] = PAREN;
     tokenStateTable[START][RIGHT_PAREN] = PAREN;
     tokenStateTable[START][OTHER] = ERROR;
-    //Error State
-    for(int i = 0; i < I_COUNT; i++){
-        tokenStateTable[ERROR][i] = START;
-    }
     // Digit State
     for(int i = 0; i < I_COUNT; i++) {
         tokenStateTable[DIGIT_S][i] = DIGIT_FINAL;
     }
     tokenStateTable[DIGIT_S][DIGIT] = DIGIT_S;
-    // Final Digit State
-    for(int i = 0; i < I_COUNT; i++) {
-        tokenStateTable[DIGIT_FINAL][i] = START;
-    }
     // Identifier State
     for (int i = 0; i < I_COUNT; i++) {
         tokenStateTable[IDENTIFIER_S][i] = IDENTIFIER_FINAL;
     }
     tokenStateTable[IDENTIFIER_S][LETTER] = IDENTIFIER_S;
     tokenStateTable[IDENTIFIER_S][DIGIT] = IDENTIFIER_S;
-    // Final Identifier State
-    for (int i = 0; i < I_COUNT; i++) {
-        tokenStateTable[IDENTIFIER_FINAL][i] = START;
-    }
     // Slash State
     for (int i = 0; i < I_COUNT; i++) {
         tokenStateTable[SLASH_S][i] = DIVISION;
     }
     tokenStateTable[SLASH_S][ASTERISK] = MULTI_LINE;
     tokenStateTable[SLASH_S][SLASH] = SINGLE_LINE;
-    // Division State
-    for (int i = 0; i < I_COUNT; i++) {
-        tokenStateTable[DIVISION][i] = START;
-    }
     // Multi-line State
     for (int i = 0; i < I_COUNT; i++) {
         tokenStateTable[MULTI_LINE][i] = MULTI_LINE;
@@ -78,73 +62,43 @@ void Tokenizer::configJava0FSA() {
         tokenStateTable[EQUALS_S][i] = ASSIGNMENT;
     }
     tokenStateTable[EQUALS_S][EQUALS] = EQUALITY;
-    // Assignment State
-    for (int i = 0; i < I_COUNT; i++) {
-        tokenStateTable[ASSIGNMENT][i] = START;
-    }
-    // Equality State
-    for (int i = 0; i < I_COUNT; i++) {
-        tokenStateTable[EQUALITY][i] = START;
-    }
     // Less State
         for (int i = 0; i < I_COUNT; i++) {
         tokenStateTable[LESS_S][i] = LESS_THAN;
     }
     tokenStateTable[LESS_S][EQUALS] = LESS_EQUAL;
-    // Less Than State
-    for (int i = 0; i < I_COUNT; i++) {
-        tokenStateTable[LESS_THAN][i] = START;
-    }
-    // Less Than or Equal State
-    for (int i = 0; i < I_COUNT; i++) {
-        tokenStateTable[LESS_EQUAL][i] = START;
-    }
     // Greater State
     for (int i = 0; i < I_COUNT; i++) {
         tokenStateTable[GREATER_S][i] = GREATER_THAN;
     }
     tokenStateTable[GREATER_S][EQUALS] = GREATER_EQUAL;
-    // Greater Than State
-        for (int i = 0; i < I_COUNT; i++) {
-        tokenStateTable[LESS_THAN][i] = START;
-    }
-    // Greater Than or Equal State
-        for (int i = 0; i < I_COUNT; i++) {
-        tokenStateTable[LESS_THAN][i] = START;
-    }
     // Exclamation State
     for (int i = 0; i < I_COUNT; i++) {
         tokenStateTable[EXCLAMATION][i] = NOT;
     }
     tokenStateTable[EXCLAMATION][EQUALS] = NOT_EQUAL;
-    // Not State    
-    for (int i = 0; i < I_COUNT; i++) {
-        tokenStateTable[LESS_THAN][i] = START;
-    }
-    // Not Equal State
-    for (int i = 0; i < I_COUNT; i++) {
-        tokenStateTable[LESS_THAN][i] = START;
-    }
-    // Delimiter State
-    for (int i = 0; i < I_COUNT; i++) {
-        tokenStateTable[LESS_THAN][i] = START;
-    }
-    // Braces  State
-    for (int i = 0; i < I_COUNT; i++) {
-        tokenStateTable[LESS_THAN][i] = START;
-    }
-    // Parentheses State
-    for (int i = 0; i < I_COUNT; i++) {
-        tokenStateTable[LESS_THAN][i] = START;
-    }
+    //Error State - already initialize to 0 (START)
+    // Final Digit State - already initialize to 0 (START)
+    // Final Identifier State - already initialize to 0 (START)
+    // Division State - already initialize to 0 (START)
+    // Assignment State -- already initialize to 0 (START)
+    // Equality State - already initialize to 0 (START)
+    // Less Than State - already initialize to 0 (START)
+    // Less Than or Equal State - already initialize to 0 (START)
+    // Greater Than State - already initialize to 0 (START)
+    // Greater Than or Equal State - already initialize to 0 (START)
+    // Not State - already initialize to 0 (START)
+    // Not Equal State - already initialize to 0 (START)
+    // Delimiter State - already initialize to 0 (START)
+    // Braces  State - already initialize to 0 (START)
+    // Parentheses State - already initialize to 0 (START)
 }
 
 // gets the nextState to transition from the tokenStateTable
 TokenState Tokenizer::getNextTokenState(TokenState currentState, InputType input) {
     // verify state and input are in range
-    if (currentState < 0 || currentState >= S_COUNT || input < 0 || input >= I_COUNT) {
+    if (currentState < 0 || currentState >= S_COUNT || input < 0 || input >= I_COUNT) 
         throw out_of_range("Current state or input is out of range.");
-    }
     return static_cast<TokenState>(tokenStateTable[currentState][input]);
 }
 
@@ -166,11 +120,10 @@ int Tokenizer::getTokenCount() const {
 
 // Add a new token to the token vector
 void Tokenizer::addTokens(const string& lexeme, const string& type) {
-    if (tokenCount < MAX_TOKENS){
+    if (tokenCount < MAX_TOKENS)
         tokens[tokenCount++] = Token(lexeme, type);
-    } else {
+    else 
         cerr << "Token array is full, cannot add more tokens." << endl;
-    }
 }
 
 // Converts a character to its corresponding input
@@ -226,11 +179,10 @@ string Tokenizer::mapStateToTokenType(TokenState state, const string& lexeme) co
             break;
         case IDENTIFIER_FINAL:
             // deal with keywords
-            if (reservedWords.find(lexeme) != reservedWords.end()) {
+            if (reservedWords.find(lexeme) != reservedWords.end()) 
                 return lexeme; // It is a reserved word return as token type
-            } else {
-                return "IDENTIFIER"; // Not reserved treat as identifier
-            }   
+            else
+                return "IDENTIFIER"; // Not reserved treat as identifier 
         case DIGIT_FINAL:
             return "NUMERIC_LITERAL";
         case DIVISION:
@@ -282,7 +234,7 @@ void Tokenizer::tokenize() {
                 position++;
                 break;
             case ERROR:
-                throw runtime_error("Invalid character read in: " + currentChar);
+                cerr << "Invalid character read in: " + currentChar << endl;
                 position++;
                 break;
             case OPERATION:
@@ -344,9 +296,8 @@ void Tokenizer::tokenize() {
         }    
     }
     // Handle any left over characters in lexeme
-    if (!currentLexeme.empty()) {
+    if (!currentLexeme.empty()) 
         addTokens(currentLexeme, mapStateToTokenType(currentState, currentLexeme));
-    }
     // add EOF character?
     addTokens("EndFile", "EndFile");
 }

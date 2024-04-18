@@ -19,9 +19,8 @@ void SymbolTableBuilder::configSymbolTableFSA() {
     // Read program name state
     symbolStateTable[PGM_NAME][L_BRACE] = PGM_START;
     // Start of program body
-    for (int i = 0; i < TT_COUNT; i++){
+    for (int i = 0; i < TT_COUNT; i++)
         symbolStateTable[PGM_START][i] = PGM_BODY;
-    }
     symbolStateTable[PGM_START][CONST] = CONST_DEC;
     symbolStateTable[PGM_START][VAR] = VAR_DEC;
     symbolStateTable[PGM_START][PROCEDURE] = PROC_DEC;
@@ -46,30 +45,26 @@ void SymbolTableBuilder::configSymbolTableFSA() {
     symbolStateTable[PROC_NAME][L_PAREN] = PGM_START;
     symbolStateTable[PROC_NAME][L_BRACE] = PGM_START;
     // Program body state
-    for (int i = 0; i < TT_COUNT; i++) {
+    for (int i = 0; i < TT_COUNT; i++) 
         symbolStateTable[PGM_BODY][i] = PGM_BODY;
-    }
     symbolStateTable[PGM_BODY][CONST] = CONST_DEC;
     symbolStateTable[PGM_BODY][VAR] = VAR_DEC;
     symbolStateTable[PGM_BODY][PROCEDURE] = PROC_DEC;
     symbolStateTable[PGM_BODY][NUMERIC_LIT] = NUM_LIT;
     symbolStateTable[PGM_BODY][END_FILE] = END_STATE;
     // Numerical literal state
-    for (int i = 0; i < TT_COUNT; i++) {
+    for (int i = 0; i < TT_COUNT; i++) 
         symbolStateTable[NUM_LIT][i] = PGM_BODY;
-    }
     symbolStateTable[NUM_LIT][END_FILE] = END_STATE;
     // End of File state (done with pass)
-    for(int i = 0; i < TT_COUNT; i++){
+    for(int i = 0; i < TT_COUNT; i++)
         symbolStateTable[END_STATE][i] = START_S;
-    }
 }
 
 // gets the nextState to transition from the symbolStateTable
 SymbolState SymbolTableBuilder::getNextSymbolState(SymbolState currState, TokenType token) {
-    if (currState < 0 || currState >= SS_COUNT || token < 0 || token >= TT_COUNT) {
+    if (currState < 0 || currState >= SS_COUNT || token < 0 || token >= TT_COUNT) 
         throw out_of_range("Current state or token is out of range.");
-    }
     int nextState = symbolStateTable[currState][token];
     return static_cast<SymbolState>(nextState);
 }
@@ -93,12 +88,10 @@ TokenType SymbolTableBuilder::mapStringTypeToTokenType(const string& tokenType){
 
 // Add symbol to symbol vecotr
 void SymbolTableBuilder::addToSymbolTable(const string& token, const string& type, const string& value, const string& addr, const string& segment) {
-    if (symbolCount < MAX_SYMBOLS){
+    if (symbolCount < MAX_SYMBOLS)
         symbolList[symbolCount++] = Symbol(token, type, value, addr, segment);
-    } else {
+    else 
         cerr << "No more symbol space." << endl;
-    }
-    //symbolList.emplace_back(Symbol(token, type, value, to_string(addr), segment));
 }
 
 // return symbol list
@@ -178,7 +171,6 @@ void SymbolTableBuilder::buildSymbolTable(const Token* tokens, int tokenCount){
                 dataAddress += 2;
                 break;
             case END_STATE:
-                // add temp varaibles (4 to start can add more)
                 for (int i = 1; i <= tempCount; i++) {
                     temp = "T" + to_string(i);
                     addToSymbolTable(temp, "INTVAR", "?", to_string(dataAddress), "data");
