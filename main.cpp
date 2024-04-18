@@ -28,7 +28,6 @@ int main(int argc, char* argv[]) {
         return 1;
     }
     // Set the program as input for the lexer
-    //cout << code << endl;
     tokenizer.setInput(code);
     //Tokenize the program and retrieve token list 
     tokenizer.tokenize();

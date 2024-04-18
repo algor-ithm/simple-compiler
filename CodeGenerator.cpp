@@ -18,15 +18,8 @@ void CodeGenerator::optimizeQuads() {
            optimizedQuads[optimizedCount++] = current;
            i++;
         }
-        if (i == qSize - 1) {
+        if (i == qSize - 1) 
         optimizedQuads[optimizedCount++] = quads[qSize - 1];
-    }
-    }
-    
-    // print the quads for debugging
-    cout << "\nThe Optimized Quads:\n" << endl;
-    for (int i = 0; i < optimizedCount; i++) {
-        cout << optimizedQuads[i].op << ", " << optimizedQuads[i].leftArg << ", " << optimizedQuads[i].rightArg << ", " << optimizedQuads[i].result << endl;
     }
 }
 
@@ -35,12 +28,10 @@ void CodeGenerator::processSymbolTable() {
     bool found;
     for (int i = 0; i < sSize; i++) {
         sym = symbols[i];
-        if (sym.type == "PROGRAM_NAME") {
+        if (sym.type == "PROGRAM_NAME") 
             programName = sym.token;
-        }
-        if (sym.type == "CONSTVAR") {
+        if (sym.type == "CONSTVAR") 
             dataSymbols[dataSize++] = sym;
-        }
         if (sym.type == "NUMERIC_LITERAL") {
             found = false;
             for (int j =  0; j < dataSize; j++) {
@@ -48,9 +39,8 @@ void CodeGenerator::processSymbolTable() {
                     found = true;
                 }
             }
-            if (!found) {
+            if (!found)
                 dataSymbols[dataSize++] = sym;
-            }
         }
         if (sym.type == "IDENTIFIER" || sym.type == "INTVAR") {
             bssSymbols[bssSize++] = sym;
@@ -111,44 +101,32 @@ void CodeGenerator::processQuads() {
             asmCode << "\tmov edx, ResultEnd\n";
             asmCode << "\tint 80h\n\n";
         }
-        if (quad.op == "THEN") {
+        if (quad.op == "THEN") 
             asmCode << "\tJ" << quad.rightArg << " " << quad.leftArg << "\n\n";  
-        }
-        if (quad.op == "ELSE") {
+        if (quad.op == "ELSE") 
             asmCode << "\tjmp " << quad.leftArg << "\n\n";
-        } 
-        if (quad.op == "WHILE") {
+        if (quad.op == "WHILE") 
             asmCode << quad.leftArg << ":\n";
-        }
-        if (quad.op == "DO") {
+        if (quad.op == "DO") 
             asmCode << "\tJ" << quad.rightArg << " " << quad.leftArg << "\n\n";
-        }
-        if (quad.op == "JLABEL") {
+        if (quad.op == "JLABEL") 
             asmCode << quad.leftArg << ":\tnop\n\n";
-        }
-        if (quad.op == "WLABEL") {
+        if (quad.op == "WLABEL") 
             asmCode << "\tjmp" << " " << quad.leftArg << "\n\n"; 
-        }
         if (quad.op == "PROC") {
             asmCode << "; " << quad.leftArg << "\tPROC\n";
             asmCode << quad.leftArg << ":\n";
         }
-        if (quad.op == "PROCEND") {
+        if (quad.op == "PROCEND")
             asmCode << "; " << quad.leftArg << "\tENDP\n\n";
-        }
-        if (quad.op == "RetHome") {
+        if (quad.op == "RetHome") 
             asmCode << "RetHome:\n";
-        }
-        if (quad.op == "CALL") {
+        if (quad.op == "CALL") 
             asmCode << "\tcall " << quad.leftArg << "\n\n";
-        }
-        if (quad.op == "RETURN") {
+        if (quad.op == "RETURN") 
             asmCode << "\tret\n";
-        }
-        if (quad.op == "START") {
+        if (quad.op == "START") 
             asmCode << "_start: nop\n";
-        }
-
     }
 }
 
@@ -172,9 +150,8 @@ void CodeGenerator::genDataSection() {
     asmCode << "\tResultEnd\tequ\t$ - Result\n\n";
     asmCode << "\tnum\t\ttimes 6 db 'ABCDEF'\n";
     asmCode << "\tnumEnd\tequ\t$ - num\n\n";
-    for (int i = 0; i < dataSize; i++) {
+    for (int i = 0; i < dataSize; i++) 
         asmCode << "\t" << dataSymbols[i].token << "\tDW\t" << dataSymbols[i].value << "\n";
-    }
     asmCode << "\n";
 }
 
@@ -185,9 +162,8 @@ void CodeGenerator::genBssSection() {
     asmCode << "\tReadInt\t\tRESW\t1\n";
     asmCode << "\ttempint\t\tRESW\t1\n";
     asmCode << "\tnegflag\t\tRESB\t1\n\n";
-    for(int i = 0; i < bssSize; i++) {
+    for(int i = 0; i < bssSize; i++) 
         asmCode << "\t" << bssSymbols[i].token << "\t\tRESW\t1\n";
-    }
     asmCode << "\n\n";
 }
 
@@ -195,10 +171,7 @@ void CodeGenerator::genTextSection() {
     asmCode << "; Start of program\n";
     asmCode << "\tglobal _start\n";
     asmCode << "section .text\n\n";
-    // Process quads and create assembly code
-    // asmCode << "; =========Process Quads Put Assembly Here=========\n\n";
     processQuads();
-    // done with assembly
     asmCode << "; exit code\n";
     asmCode << "fini:\n";
     asmCode << "\tmov eax, sys_exit\n";

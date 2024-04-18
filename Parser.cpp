@@ -524,13 +524,14 @@ void Parser::handleStart() {
     quads[quadCount++] = quad;
 }
 
-bool Parser::isExecutable(Token t) { //, bool inDec) {
+bool Parser::isExecutable(Token t) { 
     const unordered_set<string> executableTokens = {
     "IF", "THEN", "ELSE", "WHILE", "DO", "CALL", "GET", "RETURN"
    "IDENTIFIER", "NUMERIC_LITERAL", "ASSIGN", "ADDOP", "SUBOP", "MULOP", "DIVOP", "RELOP"};
     return executableTokens.find(t.lexeme) != executableTokens.end();
 }
 
+// print functions: for debugging purposes 
 void Parser::printStack() {
     cout << "\n";
     for (int i = pStackSize - 1; i >= 0; i--) {
@@ -541,11 +542,11 @@ void Parser::printStack() {
 void Parser::printQuads() {
     cout << "\n";
     for(int i = 0; i < quadCount; i++){
-        cout << quads[i].op << ", " << quads[i].leftArg << ", " << quads[i].rightArg << ", " << quads[i].result << endl;
+        cout << quads[i].op << ", " << quads[i].leftArg << ", " << quads[i].rightArg 
+        << ", " << quads[i].result << endl;
     }
 }
 
-// public functions
 const Quad* Parser::getQuads(){
     return quads;
 }
@@ -572,14 +573,9 @@ void Parser::parse(const Token* tokens, int tokenCount) {
     for (int i = 0; i < tokenCount; i++){
         currentToken = tokens[i];
         currentOp = getTokenOpType(currentToken);
-        cout << "Reading token " << currentToken.lexeme << endl;
 
-        // if eof done parsing return from function
-        if (currentToken.lexeme == "EndFile") {
-            cout << "\nDone parsing!" << endl;
-            printStack(); printQuads();
+        if (currentToken.lexeme == "EndFile") 
             return;
-        }
 
         // check structural tokens skip or handle
         if (currentToken.type == "CLASS") {
@@ -592,8 +588,7 @@ void Parser::parse(const Token* tokens, int tokenCount) {
             continue;
         }
         if (currentToken.type == "PROCEDURE") {
-            i++;
-            procName = tokens[i].lexeme;
+            procName = tokens[++i].lexeme;
             cout << "Processing start procedure: " << procName << endl;
             handleProcedureStart(procName);
             inProc = true;
@@ -625,34 +620,25 @@ void Parser::parse(const Token* tokens, int tokenCount) {
         // check for non terminal shift onto stack
         if (currentOp == NON_OP) {
             parseStack[pStackSize++] = currentToken;
-            cout << "Shifted " << currentToken.lexeme << " onto the stack (NON-OP)" << endl;
             continue;
         }
         // determine relation and appropriate action
         topOp = getNextStackOp();
-        cout << "CurrentOp to compare " << currentToken.lexeme << endl;
         relation = getRelation(topOp, currentOp); 
-        cout << "Relation: " << relation << endl;
-        if (relation == '<' || relation == '=') {
+        if (relation == '<' || relation == '=') 
             parseStack[pStackSize++] = currentToken;
-            cout << "Shifted " << currentToken.lexeme << " onto the stack" << endl;
-        }  else if (relation == '>'){
+        else if (relation == '>')
             reductionNeeded = true;
-        } 
         // perform reductions until no more needed
         while (reductionNeeded) {
-            printStack(); cout << endl;
             performReduction();
             reductionNeeded = false;
             topOp = getNextStackOp();
-            cout << "CurrentOp to compare " << currentToken.lexeme << endl;
             relation = getRelation(topOp, currentOp);
-            if (relation == '>') {
+            if (relation == '>') 
                 reductionNeeded = true;
-            } else if (relation == '=' || relation == '<') {
+            else if (relation == '=' || relation == '<') 
                 parseStack[pStackSize++] = currentToken;
-                cout << "Shifted " << currentToken.lexeme << " onto the stack" << endl;
-            }
         }
         if (currentToken.lexeme == ")") 
             handleClosingParen();

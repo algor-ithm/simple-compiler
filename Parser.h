@@ -69,6 +69,7 @@ private:
     void handleRecursion();
     void handleStart();
     bool isExecutable(Token t);
+    // for debugging
     void printStack();
     void printQuads();
  
