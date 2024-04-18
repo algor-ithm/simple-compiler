@@ -219,6 +219,7 @@ ParserOps Parser::getNextStackOp() {
         topOp = getTokenOpType(topToken);
         if (topOp != NON_OP) break;
     }
+    cout << "Top op to compare: " << topToken.lexeme << endl;
     return topOp;
 }
 
