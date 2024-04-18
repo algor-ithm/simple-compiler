@@ -238,6 +238,17 @@ string Parser::generateLabel() {
     return "L" + to_string(labelCount++);
 }
 
+string Parser::generateJump(Quad quad){
+    string jump = " ";
+    if (quad.op == ">") jump = "LE";
+    if (quad.op == ">=") jump = "L";
+    if (quad.op == "<") jump = "GE";
+    if (quad.op == "<=") jump = "G";
+    if (quad.op == "==") jump = "NE";
+    if (quad.op == "!=") jump = "E";
+    return jump;
+}
+
 string Parser::generateWhileLabel(){
     return "W" + to_string(whileCount++);
 }
@@ -271,14 +282,6 @@ ParserOps Parser::getTokenOpType(const Token& token){
 }
 
 void Parser::performReduction() {
-    bool reduced = tryReduceArithmetic() || tryReduceBooleanExp() || tryReduceAssignment();
-    if (!reduced) {
-        cerr << "ERROR: Failed to apply operation reductions" << endl;
-        exit(EXIT_FAILURE);
-    }
-}
-
-bool Parser::tryReduceArithmetic() {
     Token rOperand = parseStack[pStackSize - 1];
     Token op = parseStack[pStackSize - 2];
     Token lOperand = parseStack[pStackSize - 3];
@@ -291,39 +294,22 @@ bool Parser::tryReduceArithmetic() {
         Token reduced(temp, "IDENTIFIER");
         pStackSize -= 3;
         parseStack[pStackSize++] = reduced;
-        return true;
-    }  
-    return false;
-}
-
-bool Parser::tryReduceBooleanExp() {
-    Token rOperand = parseStack[pStackSize - 1];
-    Token op = parseStack[pStackSize - 2];
-    Token lOperand = parseStack[pStackSize - 3];
-    if ((lOperand.type == "IDENTIFIER" || lOperand.type == "NUMERIC_LITERAL") &&
+    } else if ((lOperand.type == "IDENTIFIER" || lOperand.type == "NUMERIC_LITERAL") &&
     (rOperand.type == "IDENTIFIER" || rOperand.type == "NUMERIC_LITERAL") &&
     (op.lexeme == "==" || op.lexeme == "!=" || op.lexeme == ">" || 
     op.lexeme == "<" || op.lexeme == ">=" || op.lexeme == "<=")){
-            Quad quad(op.lexeme, lOperand.lexeme, rOperand.lexeme, "?");
+        Quad quad(op.lexeme, lOperand.lexeme, rOperand.lexeme, "?");
         quads[quadCount++] = quad;
         pStackSize -= 3;
-        return true;
+    } else if(lOperand.type == "IDENTIFIER" && (rOperand.type == "IDENTIFIER" || rOperand.type == "NUMERIC_LITERAL") 
+    && op.lexeme == "=") {
+        Quad quad(op.lexeme, lOperand.lexeme, rOperand.lexeme, "?");
+        quads[quadCount++] = quad;
+        pStackSize -= 3;  
+    } else {
+        cerr << "ERROR: Invalid operation for " << lOperand.lexeme << " " << op.lexeme << " " << rOperand.lexeme << endl;
+        exit(EXIT_FAILURE);
     } 
-    return false;
-}
-
-bool Parser::tryReduceAssignment() {
-        Token rOperand = parseStack[pStackSize - 1];
-        Token op = parseStack[pStackSize - 2];
-        Token lOperand = parseStack[pStackSize - 3];
-        if(lOperand.type == "IDENTIFIER" && (rOperand.type == "IDENTIFIER" || rOperand.type == "NUMERIC_LITERAL") 
-            && op.lexeme == "=") {
-            Quad quad(op.lexeme, lOperand.lexeme, rOperand.lexeme, "?");
-            quads[quadCount++] = quad;
-            pStackSize -= 3; 
-            return true;   
-        }
-    return false;
 }
 
 void Parser::handleClosingBrace() {
@@ -347,9 +333,8 @@ void Parser::handleClosingParen(){
         if (popToken.lexeme == "(") {
             found = true;
             break;
-        } else {
+        } else 
             id = popToken;
-        }
     }
     if (found) {
         pStackSize -= 3;
@@ -368,13 +353,7 @@ void Parser::handleIf() {
 void Parser::handleThen() {
     Quad lastQuad = quads[quadCount - 1];
     string label = generateLabel();
-    string jump;
-    if (lastQuad.op == ">") jump = "LE";
-    if (lastQuad.op == ">=") jump = "L";
-    if (lastQuad.op == "<") jump = "GE";
-    if (lastQuad.op == "<=") jump = "G";
-    if (lastQuad.op == "==") jump = "NE";
-    if (lastQuad.op == "!=") jump = "E";
+    string jump = generateJump(lastQuad);
     Quad newQuad("THEN", label, jump, "?");
     quads[quadCount++] = newQuad;
     fixUpStack[fStackSize++] = label;
@@ -432,13 +411,7 @@ void Parser::handleWhile() {
 void Parser::handleDo() {
     Quad lastQuad = quads[quadCount - 1];
     string label = generateLabel();
-    string jump;
-    if (lastQuad.op == ">") jump = "LE";
-    if (lastQuad.op == ">=") jump = "L";
-    if (lastQuad.op == "<") jump = "GE";
-    if (lastQuad.op == "<=") jump = "G";
-    if (lastQuad.op == "==") jump = "NE";
-    if (lastQuad.op == "!=") jump = "E";
+    string jump = generateJump(lastQuad);
     Quad newQuad("DO", label, jump, "?");
     quads[quadCount++] = newQuad;
     fixUpStack[fStackSize++] = label;
@@ -479,10 +452,8 @@ void Parser::handleProcedureStart(string procName) {
 }
 
 void Parser::handleProcedureEnd(string procName) {
-    if (isRecursive) {
+    if (isRecursive) 
         handleRecursion();
-        isRecursive = false;
-    }
     Quad retQuad("RETURN", "?", "?" ,"?");
     quads[quadCount++] = retQuad;
     Quad procEndQuad ("PROCEND", procName, "?", "?");
@@ -522,7 +493,8 @@ void Parser::handleRecursion(){
         }     
     }
     Quad quad("RetHome", "?", "?", "?");
-    quads[quadCount++] = quad; 
+    quads[quadCount++] = quad;
+    isRecursive = false; 
 }
 
 void Parser::handleStart() {
@@ -567,7 +539,6 @@ void Parser::parse(const Token* tokens, int tokenCount) {
     char relation;
     bool reductionNeeded;
     bool inProc = false;
-    bool inDeclaration = false;
     bool mainDetected = false;
     string procName, callProc;
     int scopeDepth = 0;

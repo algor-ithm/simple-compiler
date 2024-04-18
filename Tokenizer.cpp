@@ -108,7 +108,7 @@ TokenState Tokenizer::getNextTokenState(TokenState currentState, InputType input
 void Tokenizer::setInput(const string& newInput) {
     input = newInput;
     position = 0;
-    tokenCount = 0; // Clear previous tokens
+    tokenCount = 0; 
 }
 
 // Get the vector of tokens
@@ -237,9 +237,7 @@ void Tokenizer::tokenize() {
                 position++;
                 break;
             case ERROR:
-                error = "ERROR: Invalid character read in: ";
-                error += currentChar;
-                cerr << error << endl;
+                cerr << "ERROR: Invalid character read in: " << currentChar << endl;
                 exit(EXIT_FAILURE);
             case OPERATION:
             case DELIMITER:

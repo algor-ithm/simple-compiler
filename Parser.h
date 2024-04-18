@@ -44,13 +44,10 @@ private:
     ParserOps getTokenOpType(const Token& token);
     string generateTemp();
     string generateLabel();
+    string generateJump(Quad quad);
     string generateWhileLabel();
     string generateRecursiveLabel();
     void performReduction();
-    bool tryReduceArithmetic();
-    bool tryReduceBooleanExp();
-    //bool tryReduceOdd();
-    bool tryReduceAssignment();
     void handleClosingBrace();
     void handleClosingParen();
     void handleIf();
