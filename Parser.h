@@ -21,24 +21,25 @@ struct Quad {
     Quad(const string& o, const string& a1, const string& a2, const string& r)
         : op(o), leftArg(a1), rightArg(a2), result(r) {}
 };
+
 class Parser {
 private:
     char opPrecedence[OP_COUNT][OP_COUNT];
-    void configOpTable();
     Token parseStack[MAX_TOKENS];
-    string fixUpStack[MAX_LABELS];
-    string whileStack[MAX_LABELS];
-    string elseStack[MAX_LABELS];
-    Quad quads[MAX_QUADS];
     int pStackSize = 0;
+    string fixUpStack[MAX_LABELS];
     int fStackSize = 0;
+    string whileStack[MAX_LABELS];
     int wStackSize = 0;
+    string elseStack[MAX_LABELS];
     int eStackSize = 0;
+    Quad quads[MAX_QUADS];
     int quadCount = 0;
     int labelCount = 1;
     int tempCount = 1;
     int whileCount = 1;
     bool isRecursive;
+    void configOpTable();
     ParserOps getNextStackOp();
     char getRelation(ParserOps op1, ParserOps op2);
     ParserOps getTokenOpType(const Token& token);

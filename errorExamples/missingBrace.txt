@@ -5,4 +5,4 @@ CLASS missingBrace
     IF a > b THEN 
         c = a * b;
     PUT c;
-    }
+}

@@ -11,8 +11,7 @@
 
 using namespace std; 
 
-class FileHandler
-{
+class FileHandler {
 public:
     string readProgram(const string &filePath) const;
     void writeTokenList(const Token* tokens, int tokenCount);
