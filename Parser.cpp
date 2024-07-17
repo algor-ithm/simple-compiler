@@ -219,6 +219,7 @@ ParserOps Parser::getNextStackOp() {
         topOp = getTokenOpType(topToken);
         if (topOp != NON_OP) break;
     }
+    cout << "Top op to compare: " << topToken.lexeme << endl; 
     return topOp;
 }
 
@@ -294,6 +295,7 @@ void Parser::performReduction() {
         Token reduced(temp, "IDENTIFIER");
         pStackSize -= 3;
         parseStack[pStackSize++] = reduced;
+        cout << quad.op << ", " << quad.leftArg << ", " << quad.rightArg << ", " << quad.result << endl;
     } else if ((lOperand.type == "IDENTIFIER" || lOperand.type == "NUMERIC_LITERAL") &&
     (rOperand.type == "IDENTIFIER" || rOperand.type == "NUMERIC_LITERAL") &&
     (op.lexeme == "==" || op.lexeme == "!=" || op.lexeme == ">" || 
@@ -301,11 +303,13 @@ void Parser::performReduction() {
         Quad quad(op.lexeme, lOperand.lexeme, rOperand.lexeme, "?");
         quads[quadCount++] = quad;
         pStackSize -= 3;
+        cout << quad.op << ", " << quad.leftArg << ", " << quad.rightArg << ", " << quad.result << endl;
     } else if(lOperand.type == "IDENTIFIER" && (rOperand.type == "IDENTIFIER" || rOperand.type == "NUMERIC_LITERAL") 
     && op.lexeme == "=") {
         Quad quad(op.lexeme, lOperand.lexeme, rOperand.lexeme, "?");
         quads[quadCount++] = quad;
         pStackSize -= 3;  
+        cout << quad.op << ", " << quad.leftArg << ", " << quad.rightArg << ", " << quad.result << endl;
     } else {
         cerr << "ERROR: Invalid operation for " << lOperand.lexeme << " " << op.lexeme << " " << rOperand.lexeme << endl;
         exit(EXIT_FAILURE);
@@ -318,8 +322,8 @@ void Parser::handleClosingBrace() {
         if (leftBrace.lexeme == "{" && rightBrace.lexeme == "}") {
             pStackSize -= 2;
         } else {
-            cerr << "ERROR: Missing a matching '{' for '}'" << endl;
-            exit(EXIT_FAILURE);
+            //cerr << "ERROR: Missing a matching '{' for '}'" << endl;
+            //exit(EXIT_FAILURE);
         }
 }
 
@@ -550,6 +554,7 @@ void Parser::parse(const Token* tokens, int tokenCount) {
     for (int i = 0; i < tokenCount; i++){
         currentToken = tokens[i];
         currentOp = getTokenOpType(currentToken);
+        cout << "Reading: " << currentToken.lexeme << endl;
 
         if (currentToken.lexeme == "EndFile") 
             return;
@@ -594,32 +599,46 @@ void Parser::parse(const Token* tokens, int tokenCount) {
         // check for non terminal shift onto stack
         if (currentOp == NON_OP) {
             parseStack[pStackSize++] = currentToken;
+            cout << "Shifted " << currentToken.lexeme << " onto the stack" << endl;
             continue;
         }
         // determine relation and appropriate action
         topOp = getNextStackOp();
+        cout << "Current op to compare: " << currentToken.lexeme << endl;
         relation = getRelation(topOp, currentOp); 
-        if (relation == '<' || relation == '=') 
+        cout << "Relation: " << relation << endl;
+        if (relation == '<' || relation == '=') {
             parseStack[pStackSize++] = currentToken;
-        else if (relation == '>')
+            cout << "Shifted " << currentToken.lexeme << " onto the stack" << endl;
+        }
+        else if (relation == '>') {
             reductionNeeded = true;
+        }
         // perform reductions until no more needed
         while (reductionNeeded) {
+            printStack(); cout << endl;
             performReduction();
+            printStack(); cout << endl;
             reductionNeeded = false;
             topOp = getNextStackOp();
+            cout << "Current op to compare: " << currentToken.lexeme << endl;
             relation = getRelation(topOp, currentOp);
+            cout << "Relation: " << relation << endl;
             if (relation == '>') 
                 reductionNeeded = true;
             else if (relation == '=' || relation == '<') 
                 parseStack[pStackSize++] = currentToken;
+                cout << "Shifted " << currentToken.lexeme << " onto the stack" << endl;
         }
+
         if (currentToken.lexeme == ")") 
             handleClosingParen();
         if (currentToken.lexeme == "{") 
             scopeDepth++;
         if (currentToken.lexeme == "}") {
             handleClosingBrace();
+            cout << "Reduced braces" << endl;
+            printStack();
             scopeDepth--; 
         }
         if (currentToken.lexeme == "IF") 
@@ -647,3 +666,4 @@ void Parser::parse(const Token* tokens, int tokenCount) {
         }
     }
 }
+

@@ -51,7 +51,8 @@ void CodeGenerator::processSymbolTable() {
 void CodeGenerator::processQuads() {
     Quad quad;
     for (int i = 0; i < qSize; i++) {
-        quad = optimizedQuads[i];
+        //quad = optimizedQuads[i];
+        quad = quads[i];
         if (quad.op == "+") {
             asmCode << "\tmov ax, [" << quad.leftArg << "]\n";
             asmCode << "\tadd ax, [" << quad.rightArg << "]\n";
@@ -171,6 +172,7 @@ void CodeGenerator::genTextSection() {
     asmCode << "; Start of program\n";
     asmCode << "\tglobal _start\n";
     asmCode << "section .text\n\n";
+    // _start: nop 
     processQuads();
     asmCode << "; exit code\n";
     asmCode << "fini:\n";
@@ -258,7 +260,7 @@ string CodeGenerator::getFileName () {
 }
 
 void CodeGenerator::generateAssembly() {
-    optimizeQuads();
+    //optimizeQuads();
     processSymbolTable();
     genLinuxDefs();
     genDataSection();
